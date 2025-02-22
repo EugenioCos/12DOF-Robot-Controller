@@ -104,4 +104,4 @@ class Robot:
         if "FR" in feet:
             self.bodytoFeet1[0, 0] = self.bodytoFeet0[0, 0] = self.kinematics.L / 2 - newXZ[0]
             self.bodytoFeet1[0, 2] = self.bodytoFeet0[0, 2] = -newXZ[1]
-        self.Aggiorna(None, None, None)
+        self.Aggiorna(None, None)

@@ -68,7 +68,7 @@ class Wifi:
             return None
 
     def Comunica(self, angoli):
-        pulse = []
+        pulse = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         if not self.connesso: return
         for i in range(0, 12):
             pulse[i] = angoli[i]
