@@ -2,9 +2,9 @@ import math
 
 
 class SchermataAlto:
-    def __init__(self, tela, dati, ARC, x0, larghezza, altezza):
+    def __init__(self, root, dati, ARC, x0, larghezza, altezza):
         self.dati = dati
-        self.tela = tela
+        self.tela = root.tela
         self.ARC = ARC
         self.altezza = altezza
         self.larghezza = larghezza

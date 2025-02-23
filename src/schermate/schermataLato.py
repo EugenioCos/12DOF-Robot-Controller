@@ -3,10 +3,10 @@ import math
 
 
 class SchermataLato:
-    def __init__(self, tela, dati, wifi, larghezza, altezza):
+    def __init__(self, root, dati, larghezza, altezza):
         self.dati = dati
-        self.tela = tela
-        self.wifi = wifi
+        self.tela = root.tela
+        self.root = root
         self.altezza = altezza
         self.larghezza = larghezza
         #
@@ -38,26 +38,27 @@ class SchermataLato:
         y1 = y - self.coord[0][1]
         if y1 > 0:
             if(math.sqrt((x1 ** 2) + (y1 ** 2)) < (self.lato * 2)):
-                self.dati.SetPos(self.MouseToM(x1, y1), "FL")
+                self.dati.SetPos(self.MouseToM(x1, y1), "FL", self.root)
                 return True
         x1 = x - self.coord[3][0]
         y1 = y - self.coord[3][1]
         if(y1 > 0):
             if(math.sqrt((x1 ** 2) + (y1 ** 2)) < (self.lato * 2)):
-                self.dati.SetPos(self.MouseToM(x1, y1), "BL")
+                self.dati.SetPos(self.MouseToM(x1, y1), "BL", self.root)
                 return True
         x1 = x - self.coord[6][0]
         y1 = y - self.coord[6][1]
         if y1 > 0:
             if(math.sqrt((x1 ** 2) + (y1 ** 2)) < (self.lato * 2)):
-                self.dati.SetPos(self.MouseToM(x1, y1), "FR")
+                self.dati.SetPos(self.MouseToM(x1, y1), "FR", self.root)
                 return True
         x1 = x - self.coord[9][0]
         y1 = y - self.coord[9][1]
         if(y1 > 0):
             if(math.sqrt((x1 ** 2) + (y1 ** 2)) < (self.lato * 2)):
-                self.dati.SetPos(self.MouseToM(x1, y1), "BR")
+                self.dati.SetPos(self.MouseToM(x1, y1), "BR", self.root)
                 return True
+        return False
 
     def AggiornaCoord(self):
         self.coord[1] = self.CalcolaFemur(self.coord[0], self.dati.angles[7])
@@ -89,22 +90,22 @@ class SchermataLato:
         y = startCoord[1] - self.lato * np.sin(np.deg2rad(ang))
         return [x, y]
 
-    def MouseReleased(self, event, schermata1):
+    def MouseReleased(self, event):
         if event.y > self.yMargineBasso and event.x < 100:
             print("Cammina")
-            self.dati.Cammina(self, schermata1)  # V, angle, Wrot
+            self.dati.Cammina(self.root)  # V, angle, Wrot
         if event.y > self.yMargineBasso and event.x > 100 and event.x < 200:
             self.dati.Ferma()
         if event.y > self.yMargineBasso and event.x > 200:
             print("Cammina")
-            self.dati.Gira(self, schermata1)  # V, angle, Wrot
+            self.dati.Gira(self.root)  # V, angle, Wrot
 
     def Mouse(self, event):
         # print(event.y)
-        if(self.Elabora(event.x, event.y)):
-            self.AggiornaCoord()
-            self.wifi.Comunica(self.dati.angles)
-            self.Disegna()
+        self.Elabora(event.x, event.y)
+    
+    def Keyboard(self, event):
+        print(event.char, event.keysym)
 
     def Elimina(self):
         self.tela.delete(self.femur1)

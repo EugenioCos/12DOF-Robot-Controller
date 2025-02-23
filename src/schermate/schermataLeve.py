@@ -2,10 +2,9 @@ import tkinter
 
 
 class SchermataLeve:
-    def __init__(self, tela, dati, wifi, x0, larghezza, altezza):
-        self.tela = tela
+    def __init__(self, root, dati, x0, larghezza, altezza):
+        self.tela = root.tela
         self.dati = dati
-        self.wifi = wifi
         self.altezza = altezza
         self.x0 = x0
         self.larghezza = larghezza
@@ -24,10 +23,8 @@ class SchermataLeve:
             if xM > colonna * self.distanza and xM < (colonna + 1) * self.distanza:
                 if(event.y >= 0 and event.y <= self.yMargine2):
                     self.dati.SetAng(colonna + 6, self.yToAng(colonna, event.y))
-                    self.wifi.Comunica(self.dati.angles)
                 if(event.y >= self.altezza / 2 and event.y <= self.yMargine1):
                     self.dati.SetAng(colonna, self.yToAng(colonna + 6, event.y))
-                    self.wifi.Comunica(self.dati.angles)
         self.Disegna()
 
     def yToAng(self, n, yMouse):

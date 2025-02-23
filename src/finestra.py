@@ -1,8 +1,8 @@
 import tkinter as tk
 import time
-from src.schermate.schermata1 import SchermataLeve
-from src.schermate.schermata2 import SchermataLato
-from src.schermate.schermata3 import SchermataAlto
+from src.schermate.schermataLeve import SchermataLeve
+from src.schermate.schermataLato import SchermataLato
+from src.schermate.schermataAlto import SchermataAlto
 
 
 class Finestra:
@@ -14,7 +14,7 @@ class Finestra:
         self.wifi = wifi
 
     def MouseReleased(self, event):
-        self.schermataLato.MouseReleased(event, self.schermataLeve)
+        self.schermataLato.MouseReleased(event)
 
     def Mouse(self, event):
         if event.x < self.larghezza / 3:
@@ -27,6 +27,9 @@ class Finestra:
             self.schermataAlto.Mouse(event)
             self.schermataAlto.Disegna()
         # time.sleep(1/50)
+    
+    def KeyBoard(self, event):
+        self.schermataLato.KeyBoard(event)
 
     def Tasto(self, entryText):
         if self.wifi.connesso:
@@ -41,6 +44,11 @@ class Finestra:
         else:
             self.wifi.Disconnetti()
             varTastoScreen.set("Connetti")
+        
+    def Aggiorna(self):
+        self.schermataLeve.Disegna()
+        self.schermataLato.AggiornaCoord()
+        self.schermataLato.Disegna()
 
     def Termina(self):
         self.dati.Termina()
@@ -79,15 +87,16 @@ class Finestra:
         self.tela.grid(row=1, column=0, columnspan=3, sticky=tk.NSEW)
         self.tela.bind('<B1-Motion>', self.Mouse)
         self.tela.bind('<Button-1>', self.MouseReleased)
+        self.screen.bind('<Key>', self.KeyBoard)
 
         self.screen.update()
 #       # Schermate
         self.larghezzaTela = self.tela.winfo_width()
         self.altezzaTela = self.tela.winfo_height()
         width = self.larghezzaTela / 3
-        self.schermataLeve = SchermataLeve(self.tela, dati, self.wifi, width, width, self.altezzaTela) # ... x0, larghezza, altezza)
-        self.schermataLato = SchermataLato(self.tela, dati, self.wifi, width, self.altezzaTela) # ... larghezza, altezza)
-        self.schermataAlto = SchermataAlto(self.tela, dati, tk.ARC, width * 2, width, self.altezzaTela) # ... x0, larghezza, altezza)
+        self.schermataLeve = SchermataLeve(self, dati, width, width, self.altezzaTela) # ... x0, larghezza, altezza)
+        self.schermataLato = SchermataLato(self, dati, width, self.altezzaTela) # ... larghezza, altezza)
+        self.schermataAlto = SchermataAlto(self, dati, tk.ARC, width * 2, width, self.altezzaTela) # ... x0, larghezza, altezza)
         self.schermataLeve.Crea()
         self.schermataLato.Crea()
         self.schermataAlto.Crea()
