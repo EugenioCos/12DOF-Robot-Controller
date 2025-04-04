@@ -55,6 +55,55 @@ class robotKinematics:
         self.bodytoBR4 = np.array([-self.Xdist/2, -self.Ydist/2, -self.height])
         self.bodytoBL4 = np.array(
             [-self.Xdist / 2, self.Ydist / 2, -self.height])
+        
+### INIZIO RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ###
+    def rotazione_x(self, angolo):
+        return np.array([[1, 0, 0],
+                        [0, np.cos(angolo), -np.sin(angolo)],
+                        [0, np.sin(angolo), np.cos(angolo)]])
+
+    def rotazione_y(self, angolo):
+        return np.array([[np.cos(angolo), 0, np.sin(angolo)],
+                        [0, 1, 0],
+                        [-np.sin(angolo), 0, np.cos(angolo)]])
+        
+    def calcolaPiede(self, feet, angles_d):
+        angles = np.array([np.deg2rad(angles_d[0]), np.deg2rad(angles_d[1]), np.deg2rad(angles_d[2])])
+        print("angoli: "+str(angles_d[1:]))
+        vettFemur = np.array([[0], [0], [-self.femur]])
+        vettTibia = np.array([[0], [0], [-self.tibia]])
+        if "FR" in feet:
+            bodyToFeet = self.bodytoFR0
+            vettCoxa = np.array([[0], [-self.coxa], [0]])
+        elif "FL" in feet:
+            bodyToFeet = self.bodytoFL0
+            vettCoxa = np.array([[0], [self.coxa], [0]])
+        elif "BR" in feet:
+            bodyToFeet = self.bodytoBR0
+            vettCoxa = np.array([[0], [-self.coxa], [0]])
+        elif "BL" in feet:
+            bodyToFeet = self.bodytoBL0
+            vettCoxa = np.array([[0], [self.coxa], [0]])
+        # rotazioni
+        rotFemur = self.rotazione_y(angles[1])
+        rotTibia = self.rotazione_y(angles[2])
+
+        # step1 femur rotation must be applied to femur and tibia
+        vettFemur = np.dot(rotFemur, vettFemur)
+        vettTibia = np.dot(rotFemur, vettTibia)
+
+        # step1 tibia rotation must be applied to tibia
+        vettTibia = np.dot(rotTibia, vettTibia)
+
+        # all vector added on initial vector 
+        bodyToFeet = bodyToFeet + vettCoxa + vettFemur + vettTibia
+
+        #intVect = [int(bodytoFR[0]), int(bodytoFR[1]), int(bodytoFR[2])]
+        print("femur: \n" + str(vettFemur))
+        print("tibia: \n" + str(vettTibia))
+        print("risultato: \n" + str(bodyToFeet))
+
+### INIZIO RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ###
 
     def solve(self, orn, pos, bodytoFeet):
         bodytoFR4 = np.asarray(

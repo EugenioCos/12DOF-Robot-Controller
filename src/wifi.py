@@ -36,7 +36,9 @@ class Wifi:
             if (time.time() >= self.lastTime + 3):
                 self.Disconnetti()
                 break
-            risposta += self.Ricevi()
+            tmp = self.Ricevi()
+            if tmp != None: risposta += tmp
+            else: return None
         print(str(risposta))
         # Ricavare dalla risposta i valori di accelerazioni (se mpu attivo)
             

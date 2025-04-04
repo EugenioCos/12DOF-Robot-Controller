@@ -83,12 +83,21 @@ class Robot:
 
     # Imposta un angolo (utilizzato da vista leve)
     def SetAng(self, n, angolo):
-        self.angles[n] = angolo
+        self.angles[n] = int(angolo)
         self.wifi.Comunica(self.angles)
-        # Per aggiornare dati e finestre:
-        #selezione zampa
-        #calcolo new coord femur
-        #calcolo new coord tibia
+        if n in range(0, 3):
+            print("FR")
+            self.kinematics.calcolaPiede("FR", self.angles[0:3])
+        if n in range(3, 6):
+            print("BR")
+            self.kinematics.calcolaPiede("BR", self.angles[3:6])
+        if n in range(6, 9):
+            print("FL")
+            self.kinematics.calcolaPiede("FL", self.angles[6:9])
+        if n in range(9, 12):
+            print("BL")
+            self.kinematics.calcolaPiede("BL", self.angles[9:12])
+        # TODO aggiornare dati e finestre
 
     # Imposta nuove coordinare (utilizzato da vista Lato)
     def SetPos(self, newXZ, feet, root):
