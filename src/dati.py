@@ -30,7 +30,7 @@ class Robot:
         self.offsetPlanner = np.array([0., 0.5, 0.5, 0.]) #offset di inizio del movimento tra i passi
         self.angles = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.accXY = None # None | [accX, accY]
-        self.Aggiorna(None)
+        self.Aggiorna()
 
     def Termina(self):
         print("Terminato")
@@ -43,7 +43,7 @@ class Robot:
         self.camminando = False
 
     # Calcola nuovi angoli a partire dalle coordinate
-    def Aggiorna(self, root):
+    def Aggiorna(self):
         radsFR, radsFL, radsBR, radsBL, self.bodytoFeet = self.kinematics.solve(
             self.orn, self.pos, self.bodytoFeet1)
         for i in range(0, 3):
@@ -51,7 +51,6 @@ class Robot:
             self.angles[i + 3] = np.rad2deg(radsBR[i])
             self.angles[i + 6] = np.rad2deg(radsFL[i])
             self.angles[i + 9] = np.rad2deg(radsBL[i])
-        if(root != None): root.Aggiorna()
         self.accXY = self.wifi.Comunica(self.angles)
 
     # fa camminare il robot
@@ -69,7 +68,8 @@ class Robot:
             # print(self.planner.phi)
             # wrot = 0 in quanto il cammino non considera la rotazione
             self.bodytoFeet1 = self.planner.loop(V, self.angle, 0, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
-            self.Aggiorna(root) #nuovi angoli
+            self.Aggiorna()
+            root.Aggiorna()
         print(self.planner.phi)
 
     # fa girare il robot
@@ -79,7 +79,8 @@ class Robot:
         # il ciclo si interrompe solo se il passo è completo
         while self.girando or (self.planner.phi < 0.99 and not (self.planner.phi > 0.499 and self.planner.phi < 0.51)):
             self.bodytoFeet1 = self.planner.loop(0, self.angle, self.Wrot, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
-            self.Aggiorna(root)
+            self.Aggiorna()
+            root.Aggiorna()
 
     # Imposta un angolo (utilizzato da vista leve)
     def SetAng(self, n, angolo):
@@ -100,7 +101,7 @@ class Robot:
         # TODO aggiornare dati e finestre
 
     # Imposta nuove coordinare (utilizzato da vista Lato)
-    def SetPos(self, newXZ, feet, root):
+    def SetPos(self, newXZ, feet):
         if "FR" in feet:
             self.bodytoFeet1[0, 0] = self.bodytoFeet0[0, 0] = self.kinematics.L / 2 - newXZ[0]
             self.bodytoFeet1[0, 2] = self.bodytoFeet0[0, 2] = -newXZ[1]
@@ -113,4 +114,4 @@ class Robot:
         if "BL" in feet:
             self.bodytoFeet1[3, 0] = self.bodytoFeet0[3, 0] = -self.kinematics.L / 2 - newXZ[0]
             self.bodytoFeet1[3, 2] = self.bodytoFeet0[3, 2] = -newXZ[1]
-        self.Aggiorna(root)
+        self.Aggiorna()

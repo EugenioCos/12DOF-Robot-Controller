@@ -27,9 +27,6 @@ class Finestra:
             self.schermataAlto.Mouse(event)
             self.schermataAlto.Disegna()
         # time.sleep(1/50)
-    
-    def KeyBoard(self, event):
-        self.schermataLato.KeyBoard(event)
 
     def Tasto(self, entryText):
         if self.wifi.connesso:
@@ -87,7 +84,6 @@ class Finestra:
         self.tela.grid(row=1, column=0, columnspan=3, sticky=tk.NSEW)
         self.tela.bind('<B1-Motion>', self.Mouse)
         self.tela.bind('<Button-1>', self.MouseReleased)
-        self.screen.bind('<Key>', self.KeyBoard)
 
         self.screen.update()
 #       # Schermate
