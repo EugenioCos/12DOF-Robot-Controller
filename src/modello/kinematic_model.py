@@ -69,39 +69,45 @@ class robotKinematics:
         
     def calcolaPiede(self, feet, angles_d):
         angles = np.array([np.deg2rad(angles_d[0]), np.deg2rad(angles_d[1]), np.deg2rad(angles_d[2])])
-        print("angoli: "+str(angles_d[1:]))
         vettFemur = np.array([[0], [0], [-self.femur]])
         vettTibia = np.array([[0], [0], [-self.tibia]])
         if "FR" in feet:
-            bodyToFeet = self.bodytoFR0
+            bodyToFeet = np.array([[self.bodytoFR0[0]], [self.bodytoFR0[1]], [self.bodytoFR0[2]]])
             vettCoxa = np.array([[0], [-self.coxa], [0]])
         elif "FL" in feet:
-            bodyToFeet = self.bodytoFL0
+            bodyToFeet = np.array([[self.bodytoFL0[0]], [self.bodytoFL0[1]], [self.bodytoFL0[2]]])
             vettCoxa = np.array([[0], [self.coxa], [0]])
         elif "BR" in feet:
-            bodyToFeet = self.bodytoBR0
+            bodyToFeet = np.array([[self.bodytoBR0[0]], [self.bodytoBR0[1]], [self.bodytoBR0[2]]])
             vettCoxa = np.array([[0], [-self.coxa], [0]])
         elif "BL" in feet:
-            bodyToFeet = self.bodytoBL0
+            bodyToFeet = np.array([[self.bodytoBL0[0]], [self.bodytoBL0[1]], [self.bodytoBL0[2]]])
             vettCoxa = np.array([[0], [self.coxa], [0]])
-        # rotazioni
-        rotFemur = self.rotazione_y(angles[1])
-        rotTibia = self.rotazione_y(angles[2])
 
-        # step1 femur rotation must be applied to femur and tibia
+        # step1 coxa rotation must be applied to coxa, femur and tibia
+        rotCoxa = self.rotazione_x(angles[0]-np.pi/2)
+        vettCoxa = np.dot(rotCoxa, vettCoxa)
+        vettFemur = np.dot(rotCoxa, vettFemur)
+        vettTibia = np.dot(rotCoxa, vettTibia)
+
+        # step2 femur rotation must be applied to femur and tibia
+        rotFemur = self.rotazione_y(angles[1])
         vettFemur = np.dot(rotFemur, vettFemur)
         vettTibia = np.dot(rotFemur, vettTibia)
 
-        # step1 tibia rotation must be applied to tibia
+        # step3 tibia rotation must be applied to tibia
+        rotTibia = self.rotazione_y(angles[2])
         vettTibia = np.dot(rotTibia, vettTibia)
 
         # all vector added on initial vector 
+        #print("coord_base: \n" + str(bodyToFeet))
         bodyToFeet = bodyToFeet + vettCoxa + vettFemur + vettTibia
 
         #intVect = [int(bodytoFR[0]), int(bodytoFR[1]), int(bodytoFR[2])]
-        print("femur: \n" + str(vettFemur))
-        print("tibia: \n" + str(vettTibia))
-        print("risultato: \n" + str(bodyToFeet))
+        #print("coxa: \n" + str(vettCoxa))
+        #print("femur: \n" + str(vettFemur))
+        #print("tibia: \n" + str(vettTibia))
+        #print("risultato: \n" + str(bodyToFeet))
 
 ### INIZIO RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ###
 
