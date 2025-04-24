@@ -82,9 +82,6 @@ class SchermataAlto:
         self.freccia = self.tela.create_line(self.CoordFreccia(), width=4)
         self.tela.update()
 
-    def Cancella(self):
-        self.Elimina()
-
     def Crea(self):
         self.tela.create_rectangle(self.xCorpo - self.lato, self.yCorpo - (2 * self.lato),
                                    self.xCorpo + self.lato, self.yCorpo + (2 * self.lato), width=3)

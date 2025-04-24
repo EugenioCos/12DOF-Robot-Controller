@@ -97,10 +97,6 @@ class SchermataLato:
         self.tibia4 = self.tela.create_line(self.coord[10], self.coord[11], width=3)
         self.tela.update()
 
-    def Cancella(self):
-        self.Elimina()
-        self.tela.delete(self.margineBasso)
-
     def Crea(self):
         self.margineBasso = self.tela.create_line(0, self.yMargineBasso, self.larghezza, self.yMargineBasso, width=3)
         self.AggiornaCoord()

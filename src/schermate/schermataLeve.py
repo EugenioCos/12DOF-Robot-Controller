@@ -87,12 +87,6 @@ class SchermataLeve:
             except tkinter.TclError:
                 pass
 
-    def Cancella(self):
-        self.Elimina()
-        self.tela.delete(self.margineBasso)
-        for i in range(0, 5):
-            self.tela.delete(self.linee[i])
-
     def Crea(self):
         self.text = [None, None, None, None, None,
                      None, None, None, None, None, None, None]
