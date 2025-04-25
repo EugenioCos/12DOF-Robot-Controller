@@ -50,11 +50,9 @@ class robotKinematics:
         self.bodytoBL0 = np.array([-self.L / 2, self.W / 2, 0])
         # body frame to foot frame vector
         self.bodytoFR4 = np.array([self.Xdist/2, -self.Ydist/2, -self.height])
-        self.bodytoFL4 = np.array(
-            [self.Xdist / 2, self.Ydist / 2, -self.height])
+        self.bodytoFL4 = np.array([self.Xdist / 2, self.Ydist / 2, -self.height])
         self.bodytoBR4 = np.array([-self.Xdist/2, -self.Ydist/2, -self.height])
-        self.bodytoBL4 = np.array(
-            [-self.Xdist / 2, self.Ydist / 2, -self.height])
+        self.bodytoBL4 = np.array([-self.Xdist / 2, self.Ydist / 2, -self.height])
         
 ### INIZIO RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ###
     def rotazione_x(self, angolo):
@@ -103,23 +101,19 @@ class robotKinematics:
         #print("coord_base: \n" + str(bodyToFeet))
         bodyToFeet = bodyToFeet + vettCoxa + vettFemur + vettTibia
 
-        #intVect = [int(bodytoFR[0]), int(bodytoFR[1]), int(bodytoFR[2])]
+        #intVect = [int(bodyToFeet[0]), int(bodyToFeet[1]), int(bodyToFeet[2])]
         #print("coxa: \n" + str(vettCoxa))
         #print("femur: \n" + str(vettFemur))
         #print("tibia: \n" + str(vettTibia))
-        #print("risultato: \n" + str(bodyToFeet))
+        #print("risultato: \n" + str(intVect))
 
-### INIZIO RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ###
+### FINE RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ###
 
     def solve(self, orn, pos, bodytoFeet):
-        bodytoFR4 = np.asarray(
-            [bodytoFeet[0, 0], bodytoFeet[0, 1], bodytoFeet[0, 2]])
-        bodytoFL4 = np.asarray(
-            [bodytoFeet[1, 0], bodytoFeet[1, 1], bodytoFeet[1, 2]])
-        bodytoBR4 = np.asarray(
-            [bodytoFeet[2, 0], bodytoFeet[2, 1], bodytoFeet[2, 2]])
-        bodytoBL4 = np.asarray(
-            [bodytoFeet[3, 0], bodytoFeet[3, 1], bodytoFeet[3, 2]])
+        bodytoFR4 = np.asarray([bodytoFeet[0, 0], bodytoFeet[0, 1], bodytoFeet[0, 2]])
+        bodytoFL4 = np.asarray([bodytoFeet[1, 0], bodytoFeet[1, 1], bodytoFeet[1, 2]])
+        bodytoBR4 = np.asarray([bodytoFeet[2, 0], bodytoFeet[2, 1], bodytoFeet[2, 2]])
+        bodytoBL4 = np.asarray([bodytoFeet[3, 0], bodytoFeet[3, 1], bodytoFeet[3, 2]])
 
         """defines 4 vertices which rotates with the body"""
         _bodytoFR0 = geo.transform(self.bodytoFR0, orn, pos)
@@ -149,10 +143,8 @@ class robotKinematics:
         _bodytofeetBR = _bodytoBR0 + _BRcoord
         _bodytofeetBL = _bodytoBL0 + _BLcoord
         _bodytofeet = np.matrix([[_bodytofeetFR[0], _bodytofeetFR[1], _bodytofeetFR[2]],
-                                 [_bodytofeetFL[0], _bodytofeetFL[1],
-                                     _bodytofeetFL[2]],
-                                 [_bodytofeetBR[0], _bodytofeetBR[1],
-                                     _bodytofeetBR[2]],
+                                 [_bodytofeetFL[0], _bodytofeetFL[1], _bodytofeetFL[2]],
+                                 [_bodytofeetBR[0], _bodytofeetBR[1], _bodytofeetBR[2]],
                                  [_bodytofeetBL[0], _bodytofeetBL[1], _bodytofeetBL[2]]])
 
         return FR_angles, FL_angles, BR_angles, BL_angles, _bodytofeet

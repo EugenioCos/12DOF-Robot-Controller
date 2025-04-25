@@ -30,19 +30,19 @@ class Wifi:
             print("[Wifi] Invio Fallito")
             return None
         
-        risposta = self.Ricevi() # Ricezione risposta
-        if risposta == None: return None
+        timeout = time.time() + 3
+        risposta = "" # Ricezione risposta
         while '>' not in risposta:
-            if (time.time() >= self.lastTime + 3):
+            if (time.time() >= timeout):
                 self.Disconnetti()
                 break
             tmp = self.Ricevi()
-            if tmp != None: risposta += tmp
-            else: return None
+            if tmp == None: return None
+            else: risposta += tmp
         print(str(risposta))
         # Ricavare dalla risposta i valori di accelerazioni (se mpu attivo)
             
-        if '#' in risposta:
+        if '#' in risposta: # gyro data
             risposta = risposta[1:-1]
             print("cutted: "+risposta)
             risposta.split('#');
