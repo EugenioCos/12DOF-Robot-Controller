@@ -3,6 +3,7 @@ import tkinter
 
 class SchermataLeve:
     def __init__(self, root, dati, x0, larghezza, altezza):
+        self.root = root
         self.tela = root.tela
         self.dati = dati
         self.altezza = altezza
@@ -22,9 +23,9 @@ class SchermataLeve:
         for colonna in range(0, nColonne):
             if xM > colonna * self.distanza and xM < (colonna + 1) * self.distanza:
                 if(event.y >= 0 and event.y <= self.yMargine2):
-                    self.dati.SetAng(colonna + 6, self.yToAng(colonna, event.y))
+                    self.dati.SetAng(colonna + 6, self.yToAng(colonna, event.y), self.root)
                 if(event.y >= self.altezza / 2 and event.y <= self.yMargine1):
-                    self.dati.SetAng(colonna, self.yToAng(colonna + 6, event.y))
+                    self.dati.SetAng(colonna, self.yToAng(colonna + 6, event.y), self.root)
         self.Disegna()
 
     def yToAng(self, n, yMouse):

@@ -1,7 +1,6 @@
 import numpy as np
 import math
 
-
 class SchermataLato:
     def __init__(self, root, dati, larghezza, altezza):
         self.dati = dati
@@ -14,17 +13,17 @@ class SchermataLato:
         self.yMargineBasso = altezza - 65
         self.yTesto = self.yMargineBasso + 35
         self.XTesto = 35
-        self.coord = [[larghezza / 5, 30], [0, 0], [0, 0], # FL: zero, femur, tibia
-                      [larghezza / 5 * 4, 30], [0, 0], [0,0], # BL: zero, femur, tibia
-                      [larghezza / 5, 30 + altezza / 2], [0, 0], [0,0], # FR: zero, femur, tibia
-                      [larghezza / 5 * 4, 30 + altezza / 2], [0, 0], [0,0]] # BR: zero, femur, tibia
+        self.coord = [[larghezza / 5, 30], [0, 0], [0, 0], # FR: zero, femur, tibia
+                      [larghezza / 5, 30 + altezza / 2], [0, 0], [0,0], # FL: zero, femur, tibia
+                      [larghezza / 5 * 4, 30], [0, 0], [0,0], # BR: zero, femur, tibia
+                      [larghezza / 5 * 4, 30 + altezza / 2], [0, 0], [0,0]] # BL: zero, femur, tibia
         self.AggiornaCoord()
 
     def Elabora(self, x, y):
-        return self.ElaboraZampa(x - self.coord[0][0], y - self.coord[0][1], "BL") or \
+        return self.ElaboraZampa(x - self.coord[0][0], y - self.coord[0][1], "FR") or \
             self.ElaboraZampa(x - self.coord[3][0], y - self.coord[3][1], "FL") or \
             self.ElaboraZampa(x - self.coord[6][0], y - self.coord[6][1], "BR") or \
-            self.ElaboraZampa(x - self.coord[9][0], y - self.coord[9][1], "FR")
+            self.ElaboraZampa(x - self.coord[9][0], y - self.coord[9][1], "BL")
     
     def ElaboraZampa(self, x1, y1, zampa):
         if(y1 > 0):
@@ -34,14 +33,14 @@ class SchermataLato:
         return False
 
     def AggiornaCoord(self):
-        self.coord[1] = self.CalcolaFemur(self.coord[0], self.dati.angles[10])
-        self.coord[2] = self.CalcolaTibia(self.coord[1], self.dati.angles[10], self.dati.angles[11])
-        self.coord[4] = self.CalcolaFemur(self.coord[3], self.dati.angles[7])
-        self.coord[5] = self.CalcolaTibia(self.coord[4], self.dati.angles[7], self.dati.angles[8])
-        self.coord[7] = self.CalcolaFemur(self.coord[6], self.dati.angles[4])
-        self.coord[8] = self.CalcolaTibia(self.coord[7], self.dati.angles[4], self.dati.angles[5])
-        self.coord[10] = self.CalcolaFemur(self.coord[9], self.dati.angles[1])
-        self.coord[11] = self.CalcolaTibia(self.coord[10], self.dati.angles[1], self.dati.angles[2])
+        self.coord[1] = self.CalcolaFemur(self.coord[0], self.dati.angles[1])
+        self.coord[2] = self.CalcolaTibia(self.coord[1], self.dati.angles[1], self.dati.angles[2])
+        self.coord[4] = self.CalcolaFemur(self.coord[3], self.dati.angles[4])
+        self.coord[5] = self.CalcolaTibia(self.coord[4], self.dati.angles[4], self.dati.angles[5])
+        self.coord[7] = self.CalcolaFemur(self.coord[6], self.dati.angles[7])
+        self.coord[8] = self.CalcolaTibia(self.coord[7], self.dati.angles[7], self.dati.angles[8])
+        self.coord[10] = self.CalcolaFemur(self.coord[9], self.dati.angles[10])
+        self.coord[11] = self.CalcolaTibia(self.coord[10], self.dati.angles[10], self.dati.angles[11])
 
     def MouseToM(self, x, y):
         newX = float(x / (self.lato * 10))

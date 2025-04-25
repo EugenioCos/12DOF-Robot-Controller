@@ -101,11 +101,10 @@ class robotKinematics:
         #print("coord_base: \n" + str(bodyToFeet))
         bodyToFeet = bodyToFeet + vettCoxa + vettFemur + vettTibia
 
-        #intVect = [int(bodyToFeet[0]), int(bodyToFeet[1]), int(bodyToFeet[2])]
         #print("coxa: \n" + str(vettCoxa))
         #print("femur: \n" + str(vettFemur))
         #print("tibia: \n" + str(vettTibia))
-        #print("risultato: \n" + str(intVect))
+        #print("risultato: \n" + str(bodyToFeet))
 
 ### FINE RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ###
 

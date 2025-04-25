@@ -48,10 +48,9 @@ class Robot:
             self.orn, self.pos, self.bodytoFeet1)
         for i in range(0, 3):
             self.angles[i] = np.rad2deg(radsFR[i])
-            self.angles[i + 3] = np.rad2deg(radsBR[i])
-            self.angles[i + 6] = np.rad2deg(radsFL[i])
+            self.angles[i + 3] = np.rad2deg(radsFL[i])
+            self.angles[i + 6] = np.rad2deg(radsBR[i])
             self.angles[i + 9] = np.rad2deg(radsBL[i])
-        self.accXY = self.wifi.Comunica(self.angles)
 
     # fa camminare il robot
     def Cammina(self, root):
@@ -69,36 +68,38 @@ class Robot:
             # wrot = 0 in quanto il cammino non considera la rotazione
             self.bodytoFeet1 = self.planner.loop(V, self.angle, 0, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
             self.Aggiorna()
+            self.accXY = self.wifi.Comunica(self.angles)
             root.Aggiorna()
-        print(self.planner.phi)
 
     # fa girare il robot
     def Gira(self, root):
         self.girando = True
-        V = 0.5  # 0.5
+        print(self.Wrot)
         # il ciclo si interrompe solo se il passo è completo
         while self.girando or (self.planner.phi < 0.99 and not (self.planner.phi > 0.499 and self.planner.phi < 0.51)):
-            self.bodytoFeet1 = self.planner.loop(0, self.angle, self.Wrot, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
+            self.bodytoFeet1 = self.planner.loop(0, 0, self.Wrot, self.tPlanner*3, self.offsetPlanner, self.bodytoFeet0)
             self.Aggiorna()
+            self.accXY = self.wifi.Comunica(self.angles)
             root.Aggiorna()
 
     # Imposta un angolo (utilizzato da vista leve)
-    def SetAng(self, n, angolo):
+    def SetAng(self, n, angolo, root):
+        print("setang: "+str(n)+",\t "+str(angolo))
         self.angles[n] = int(angolo)
-        self.wifi.Comunica(self.angles)
         if n in range(0, 3):
             print("FR")
-            self.kinematics.calcolaPiede("FR", self.angles[0:3])
+            self.bodytoFeet1[0] = self.bodytoFeet0[0] = self.kinematics.calcolaPiede("FR", self.angles[0:3])
         if n in range(3, 6):
-            print("BR")
-            self.kinematics.calcolaPiede("BR", self.angles[3:6])
-        if n in range(6, 9):
             print("FL")
-            self.kinematics.calcolaPiede("FL", self.angles[6:9])
+            self.bodytoFeet1[1] = self.bodytoFeet0[1] = self.kinematics.calcolaPiede("FL", self.angles[3:6])
+        if n in range(6, 9):
+            print("BR")
+            self.bodytoFeet1[2] = self.bodytoFeet0[2] = self.kinematics.calcolaPiede("BR", self.angles[6:9])
         if n in range(9, 12):
             print("BL")
-            self.kinematics.calcolaPiede("BL", self.angles[9:12])
-        # TODO aggiornare dati e finestre
+            self.bodytoFeet1[3] = self.bodytoFeet0[3] = self.kinematics.calcolaPiede("BL", self.angles[9:12])
+        self.wifi.Comunica(self.angles)
+        root.Aggiorna()
 
     # Imposta nuove coordinare (utilizzato da vista Lato)
     def SetPos(self, newXZ, feet):
@@ -115,3 +116,4 @@ class Robot:
             self.bodytoFeet1[3, 0] = self.bodytoFeet0[3, 0] = -self.kinematics.L / 2 - newXZ[0]
             self.bodytoFeet1[3, 2] = self.bodytoFeet0[3, 2] = -newXZ[1]
         self.Aggiorna()
+        self.accXY = self.wifi.Comunica(self.angles)
