@@ -5,7 +5,9 @@ from src.finestra import Finestra
 # Seriale
 # /dev/cu.usbserial-0001   /dev/cu.usbmodem14101
 portaDefault = '<1500#500#1500#1500#500#1500#1500#500#1500#1500#500#1500>'
-wifi = Wifi(1 / 30)
+ip = "192.168.1.10"
+port = 81
+wifi = Wifi(1 / 30, ip, port)
 
 # Dati Robot
 dati = Robot(wifi)

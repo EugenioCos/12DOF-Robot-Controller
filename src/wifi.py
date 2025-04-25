@@ -3,16 +3,18 @@ import time
 
 
 class Wifi:
-    def __init__(self, intervallo):
+    def __init__(self, intervallo, ip, port):
         self.connesso = False
         self.intervallo = intervallo
         self.lastTime = time.time()
+        self.ip = ip
+        self.port = port
 
     def Avvia(self):
         try:
             self.s = socket.socket()
             self.s.settimeout(3)
-            self.s.connect(('192.168.4.1', 80))
+            self.s.connect((self.ip, self.port))
         except socket.error as exc:
             print("Server non creato: ", exc)
             return "Errore"
