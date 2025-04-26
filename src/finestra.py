@@ -19,12 +19,11 @@ class Finestra:
     def Mouse(self, event):
         if event.x < self.larghezza / 3:
             self.schermataLato.Mouse(event)
-            self.schermataLeve.Disegna()
         elif event.x < self.larghezza / 3 * 2:
             self.schermataLeve.Mouse(event)
-            self.schermataLato.Disegna()
         else:
             self.schermataAlto.Mouse(event)
+            self.schermataAlto.Elimina()
             self.schermataAlto.Disegna()
         # time.sleep(1/50)
 
@@ -43,9 +42,11 @@ class Finestra:
             varTastoScreen.set("Connetti")
         
     def Aggiorna(self):
+        self.schermataLeve.Elimina()
         self.schermataLeve.Disegna()
-        self.schermataLato.AggiornaCoord()
+        self.schermataLato.Elimina()
         self.schermataLato.Disegna()
+        self.tela.update()
 
     def Termina(self):
         self.dati.Termina()
@@ -92,9 +93,10 @@ class Finestra:
         width = self.larghezzaTela / 3
         self.schermataLeve = SchermataLeve(self, dati, width, width, self.altezzaTela) # ... x0, larghezza, altezza)
         self.schermataLato = SchermataLato(self, dati, width, self.altezzaTela) # ... larghezza, altezza)
-        self.schermataAlto = SchermataAlto(self, dati, tk.ARC, width * 2, width, self.altezzaTela) # ... x0, larghezza, altezza)
+        self.schermataAlto = SchermataAlto(self, dati, width * 2, width, self.altezzaTela) # ... x0, larghezza, altezza)
         self.schermataLeve.Crea()
         self.schermataLato.Crea()
         self.schermataAlto.Crea()
+        #self.tela.update()
 
         self.screen.mainloop()

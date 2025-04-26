@@ -14,49 +14,10 @@ class SchermataLato:
         self.yTesto = self.yMargineBasso + 35
         self.XTesto = 35
         self.coord = [[larghezza / 5, 30], [0, 0], [0, 0], # FR: zero, femur, tibia
-                      [larghezza / 5, 30 + altezza / 2], [0, 0], [0,0], # FL: zero, femur, tibia
+                      [larghezza / 5, 30 + altezza / 3], [0, 0], [0,0], # FL: zero, femur, tibia
                       [larghezza / 5 * 4, 30], [0, 0], [0,0], # BR: zero, femur, tibia
-                      [larghezza / 5 * 4, 30 + altezza / 2], [0, 0], [0,0]] # BL: zero, femur, tibia
+                      [larghezza / 5 * 4, 30 + altezza / 3], [0, 0], [0,0]] # BL: zero, femur, tibia
         self.AggiornaCoord()
-
-    def Elabora(self, x, y):
-        return self.ElaboraZampa(x - self.coord[0][0], y - self.coord[0][1], "FR") or \
-            self.ElaboraZampa(x - self.coord[3][0], y - self.coord[3][1], "FL") or \
-            self.ElaboraZampa(x - self.coord[6][0], y - self.coord[6][1], "BR") or \
-            self.ElaboraZampa(x - self.coord[9][0], y - self.coord[9][1], "BL")
-    
-    def ElaboraZampa(self, x1, y1, zampa):
-        if(y1 > 0):
-            if(math.sqrt((x1 ** 2) + (y1 ** 2)) < (self.lato * 2)):
-                self.dati.SetPos(self.MouseToM(x1, y1), zampa)
-                return True
-        return False
-
-    def AggiornaCoord(self):
-        self.coord[1] = self.CalcolaFemur(self.coord[0], self.dati.angles[1])
-        self.coord[2] = self.CalcolaTibia(self.coord[1], self.dati.angles[1], self.dati.angles[2])
-        self.coord[4] = self.CalcolaFemur(self.coord[3], self.dati.angles[4])
-        self.coord[5] = self.CalcolaTibia(self.coord[4], self.dati.angles[4], self.dati.angles[5])
-        self.coord[7] = self.CalcolaFemur(self.coord[6], self.dati.angles[7])
-        self.coord[8] = self.CalcolaTibia(self.coord[7], self.dati.angles[7], self.dati.angles[8])
-        self.coord[10] = self.CalcolaFemur(self.coord[9], self.dati.angles[10])
-        self.coord[11] = self.CalcolaTibia(self.coord[10], self.dati.angles[10], self.dati.angles[11])
-
-    def MouseToM(self, x, y):
-        newX = float(x / (self.lato * 10))
-        newY = float(y / (self.lato * 10))
-        return [newX, newY]
-
-    def CalcolaFemur(self, coordZero, angle1):
-        x = coordZero[0] + np.sin(np.deg2rad(angle1)) * self.lato
-        y = coordZero[1] + np.cos(np.deg2rad(angle1)) * self.lato
-        return [x, y]
-
-    def CalcolaTibia(self, startCoord, angle1, angle2):
-        ang = (-90 + angle1) + angle2
-        x = startCoord[0] + self.lato * np.cos(np.deg2rad(ang))
-        y = startCoord[1] - self.lato * np.sin(np.deg2rad(ang))
-        return [x, y]
 
     def MouseReleased(self, event):
         if event.y > self.yMargineBasso and event.x < 100:
@@ -69,45 +30,62 @@ class SchermataLato:
             self.dati.Gira(self.root)  # V, angle, Wrot
 
     def Mouse(self, event):
+        x = event.x
+        y = event.y
         # print(event.y)
-        if self.Elabora(event.x, event.y):
-            self.root.Aggiorna()
+        if (self.ElaboraZampa(x - self.coord[0][0], y - self.coord[0][1], "FR") or \
+            self.ElaboraZampa(x - self.coord[3][0], y - self.coord[3][1], "FL") or \
+            self.ElaboraZampa(x - self.coord[6][0], y - self.coord[6][1], "BR") or \
+            self.ElaboraZampa(x - self.coord[9][0], y - self.coord[9][1], "BL")):
+            self.root.Aggiorna()    
+
+    def ElaboraZampa(self, x1, y1, zampa):
+        if(y1 > 0):
+            if(math.sqrt((x1 ** 2) + (y1 ** 2)) < (self.lato * 2)):
+                self.dati.SetPos(self.MouseToM(x1, y1), zampa)
+                return True
+        return False
+
+    def AggiornaCoord(self):
+        for i in range(1, 12, 3):
+            self.coord[i] = self.CalcolaFemur(self.coord[i-1], self.dati.angles[i])
+            self.coord[i+1] = self.CalcolaTibia(self.coord[i], self.dati.angles[i], self.dati.angles[i+1])
+
+    def MouseToM(self, x, y):
+        newX = float(x / (self.lato * 10))
+        newY = float(y / (self.lato * 10))
+        return [newX, newY]
+
+    def CalcolaFemur(self, coordZero, angle1):
+        x = coordZero[0] + np.sin(np.deg2rad(angle1)) * self.lato
+        y = coordZero[1] + np.cos(np.deg2rad(angle1)) * self.lato
+        return [x, y]
+
+    def CalcolaTibia(self, startCoord, angle1, angle2):
+        ang = -90 + angle1 + angle2
+        x = startCoord[0] + self.lato * np.cos(np.deg2rad(ang))
+        y = startCoord[1] - self.lato * np.sin(np.deg2rad(ang))
+        return [x, y]
 
     def Elimina(self):
-        self.tela.delete(self.femur1)
-        self.tela.delete(self.tibia1)
-        self.tela.delete(self.femur2)
-        self.tela.delete(self.tibia2)
-        self.tela.delete(self.femur3)
-        self.tela.delete(self.tibia3)
-        self.tela.delete(self.femur4)
-        self.tela.delete(self.tibia4)
+        for femur in self.femurs:
+            self.tela.delete(femur)
 
     def Disegna(self):
-        self.Elimina()
         self.AggiornaCoord()
-        self.femur1 = self.tela.create_line(self.coord[0], self.coord[1], width=3)
-        self.tibia1 = self.tela.create_line(self.coord[1], self.coord[2], width=3)
-        self.femur2 = self.tela.create_line(self.coord[3], self.coord[4], width=3)
-        self.tibia2 = self.tela.create_line(self.coord[4], self.coord[5], width=3)
-        self.femur3 = self.tela.create_line(self.coord[6], self.coord[7], width=3)
-        self.tibia3 = self.tela.create_line(self.coord[7], self.coord[8], width=3)
-        self.femur4 = self.tela.create_line(self.coord[9], self.coord[10], width=3)
-        self.tibia4 = self.tela.create_line(self.coord[10], self.coord[11], width=3)
-        self.tela.update()
+        cood_indexes = [1, 2, 4, 5, 7, 8, 10, 11]
+        for i, ndx in enumerate(cood_indexes):
+            self.femurs[i] = self.tela.create_line(self.coord[ndx-1], self.coord[ndx], width=3)
 
     def Crea(self):
+        self.femurs = [None, None, None, None, None, None, None, None]
         self.margineBasso = self.tela.create_line(0, self.yMargineBasso, self.larghezza, self.yMargineBasso, width=3)
-        self.AggiornaCoord()
-        self.femur1 = self.tela.create_line(self.coord[0], self.coord[1], width=3)
-        self.tibia1 = self.tela.create_line(self.coord[1], self.coord[2], width=3)
-        self.femur2 = self.tela.create_line(self.coord[3], self.coord[4], width=3)
-        self.tibia2 = self.tela.create_line(self.coord[4], self.coord[5], width=3)
-        self.femur3 = self.tela.create_line(self.coord[6], self.coord[7], width=3)
-        self.tibia3 = self.tela.create_line(self.coord[7], self.coord[8], width=3)
-        self.femur4 = self.tela.create_line(self.coord[9], self.coord[10], width=3)
-        self.tibia4 = self.tela.create_line(self.coord[10], self.coord[11], width=3)
+        self.Disegna()
+        for i in range(0, 12, 3):
+            corner1 = (self.coord[i][0]-10, self.coord[i][1]-8)
+            corner2 = (self.coord[i][0]+25, self.coord[i][1]+10)
+            self.tela.create_rectangle(corner1[0], corner1[1], corner2[0], corner2[1], width=3)
+            
         self.tasto1 = self.tela.create_text(35, self.yTesto, text=str("Cammina"))
         self.tasto2 = self.tela.create_text(100 + 35, self.yTesto, text=str("Fermati"))
         self.tasto3 = self.tela.create_text(200 + 35, self.yTesto, text=str("Gira"))
-#       #self.tela.update()

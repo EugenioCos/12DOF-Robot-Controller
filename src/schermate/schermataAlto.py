@@ -1,11 +1,10 @@
 import math
-
+import tkinter as tk
 
 class SchermataAlto:
-    def __init__(self, root, dati, ARC, x0, larghezza, altezza):
+    def __init__(self, root, dati, x0, larghezza, altezza):
         self.dati = dati
         self.tela = root.tela
-        self.ARC = ARC
         self.altezza = altezza
         self.larghezza = larghezza
         self.x0 = x0
@@ -37,7 +36,7 @@ class SchermataAlto:
                 self.dati.Wrot = Wrot
             self.tela.delete(self.puntatore)
             self.puntatore = self.tela.create_arc(
-                self.coord, start=-(self.AngWrot-90)-5, extent=10, width=6, style=self.ARC)
+                self.coord, start=-(self.AngWrot-90)-5, extent=10, width=6, style=tk.ARC)
 
     def CalcolaDirezione(self, event):
         x = event.x - self.xCorpo
@@ -80,15 +79,12 @@ class SchermataAlto:
     def Disegna(self):
         self.Elimina()
         self.freccia = self.tela.create_line(self.CoordFreccia(), width=4)
-        self.tela.update()
 
     def Crea(self):
         self.tela.create_rectangle(self.xCorpo - self.lato, self.yCorpo - (2 * self.lato),
                                    self.xCorpo + self.lato, self.yCorpo + (2 * self.lato), width=3)
-        self.tela.create_rectangle(0, 0, 1100, self.altezza, width=3)
         self.tela.create_arc(self.coord, start=20, extent=140,
-                             width=2, style=self.ARC)
+                             width=2, style=tk.ARC)
         self.puntatore = self.tela.create_arc(
-            self.coord, start=85, extent=10, width=6, style=self.ARC)
+            self.coord, start=85, extent=10, width=6, style=tk.ARC)
         self.freccia = self.tela.create_line(self.CoordFreccia(), width=4)
-#       #self.tela.update()

@@ -44,7 +44,7 @@ class Robot:
 
     # Calcola nuovi angoli a partire dalle coordinate
     def Aggiorna(self):
-        radsFR, radsFL, radsBR, radsBL, self.bodytoFeet = self.kinematics.solve(
+        radsFR, radsFL, radsBR, radsBL, bodyToFeet = self.kinematics.solve(
             self.orn, self.pos, self.bodytoFeet1)
         for i in range(0, 3):
             self.angles[i] = np.rad2deg(radsFR[i])
@@ -83,23 +83,17 @@ class Robot:
             root.Aggiorna()
 
     # Imposta un angolo (utilizzato da vista leve)
-    def SetAng(self, n, angolo, root):
-        print("setang: "+str(n)+",\t "+str(angolo))
+    def SetAng(self, n, angolo):
         self.angles[n] = int(angolo)
         if n in range(0, 3):
-            print("FR")
             self.bodytoFeet1[0] = self.bodytoFeet0[0] = self.kinematics.calcolaPiede("FR", self.angles[0:3])
         if n in range(3, 6):
-            print("FL")
             self.bodytoFeet1[1] = self.bodytoFeet0[1] = self.kinematics.calcolaPiede("FL", self.angles[3:6])
         if n in range(6, 9):
-            print("BR")
             self.bodytoFeet1[2] = self.bodytoFeet0[2] = self.kinematics.calcolaPiede("BR", self.angles[6:9])
         if n in range(9, 12):
-            print("BL")
             self.bodytoFeet1[3] = self.bodytoFeet0[3] = self.kinematics.calcolaPiede("BL", self.angles[9:12])
         self.wifi.Comunica(self.angles)
-        root.Aggiorna()
 
     # Imposta nuove coordinare (utilizzato da vista Lato)
     def SetPos(self, newXZ, feet):
