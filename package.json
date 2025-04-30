@@ -1,0 +1,22 @@
+{
+  "name": "materiald",
+  "version": "1.0.0",
+  "description": "test",
+  "main": "scripts/main.js",
+  "scripts": {
+    "sass": "sass styles/style.scss styles/style.css",
+    "rollup": "npx rollup -p @rollup/plugin-node-resolve scripts/index.js -o scripts/bundle.js",
+    "start": "electron .",
+    "test": "npm test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@material/web": "^2.3.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "rollup": "^4.40.1"
+  },
+  "devDependencies": {
+    "electron": "^36.0.0"
+  }
+}
