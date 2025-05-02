@@ -165,7 +165,7 @@ class trotGait:
 
         if (self.phi >= 0.99):
             self.lastTime = time.time()
-            print("[Gait Planner] Nuovo passo")
+            #print("[Gait Planner] Nuovo passo")
         if ((time.time() - self.lastTime) / T > self.phi + 0.4): # Se è stato fermo ripristina lastTime
             self.lastTime = time.time() - (self.phi * T)
         self.phi = (time.time() - self.lastTime) / T

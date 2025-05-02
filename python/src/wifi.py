@@ -3,21 +3,19 @@ import time
 
 
 class Wifi:
-    def __init__(self, intervallo, ip, port):
+    def __init__(self, intervallo):
         self.connesso = False
         self.intervallo = intervallo
         self.lastTime = time.time()
-        self.ip = ip
-        self.port = port
 
-    def Avvia(self):
+    def Avvia(self, ip, port):
         try:
             self.s = socket.socket()
             self.s.settimeout(3)
-            self.s.connect((self.ip, self.port))
+            self.s.connect((ip, port))
         except socket.error as exc:
             print("Server non creato: ", exc)
-            return "Errore"
+            return
         self.connesso = True
         print("Connesso")
 
@@ -25,7 +23,7 @@ class Wifi:
         while(time.time() - self.lastTime < self.intervallo): # Invio
             pass
         self.lastTime = time.time()
-        print("Sending... "+out)
+        #print("Sending... "+out)
         try:
             self.s.send(out.encode())
         except:
@@ -41,7 +39,7 @@ class Wifi:
             tmp = self.Ricevi()
             if tmp == None: return None
             else: risposta += tmp
-        print(str(risposta))
+        #print(str(risposta))
         # Ricavare dalla risposta i valori di accelerazioni (se mpu attivo)
             
         if '#' in risposta: # gyro data
@@ -58,17 +56,15 @@ class Wifi:
 
     def Disconnetti(self):
         print("disconnesso")
-        self.s.close()
+        if self.connesso: self.s.close()
         self.connesso = False
 
     def Ricevi(self):
         try:
             return self.s.recv(1024).decode("utf-8").rstrip('\n\r')
         except ConnectionResetError:
-            print("Non connesso")
             return None
         except socket.timeout:
-            print("Nessuna Risposta")
             return None
 
     def Comunica(self, angoli):

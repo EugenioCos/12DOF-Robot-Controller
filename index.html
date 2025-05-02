@@ -3,10 +3,10 @@
 <head>
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet">
   <link href="styles/style.css" rel="stylesheet">
-  <script src="scripts/bundle.js"></script>
 </head>
 
 <body>
+  <script src="scripts/bundle.js"></script>
   <h1 class="md-typescale-headline-medium">Quadruped Robot Controller</h1>
   <div class="container">
     <div class="controllers">
@@ -14,78 +14,106 @@
         <div class="angle-controller">
           <md-elevation></md-elevation>
           <h3>Front left</h3>
-          <md-slider></md-slider>
-          <md-slider></md-slider>
-          <md-slider></md-slider>
+          <md-slider cmd="setang" ang="3" labeled value="90" max="180"></md-slider>
+          <md-slider cmd="setang" ang="4" labeled max="180"></md-slider>
+          <md-slider cmd="setang" ang="5" labeled min="-135" max="0"></md-slider>
         </div>
         <div class="angle-controller">
           <md-elevation></md-elevation>
           <h3>Back left</h3>
-          <md-slider></md-slider>
-          <md-slider></md-slider>
-          <md-slider></md-slider>
+          <md-slider cmd="setang" ang="9" labeled value="90" max="180"></md-slider>
+          <md-slider cmd="setang" ang="10" labeled max="180"></md-slider>
+          <md-slider cmd="setang" ang="11" labeled min="-135" max="0"></md-slider>
         </div>
         <div class="angle-controller">
           <md-elevation></md-elevation>
           <h3>Front right</h3>
-          <md-slider></md-slider>
-          <md-slider></md-slider>
-          <md-slider></md-slider>
+          <md-slider cmd="setang" ang="0" labeled value="90" max="180"></md-slider>
+          <md-slider cmd="setang" ang="1" labeled max="180"></md-slider>
+          <md-slider cmd="setang" ang="2" labeled min="-135" max="0"></md-slider>
         </div>
         <div class="angle-controller">
           <md-elevation></md-elevation>
           <h3>Back right</h3>
-          <md-slider></md-slider>
-          <md-slider></md-slider>
-          <md-slider></md-slider>
+          <md-slider cmd="setang" ang="6" labeled value="90" max="180"></md-slider>
+          <md-slider cmd="setang" ang="7" labeled max="180"></md-slider>
+          <md-slider cmd="setang" ang="8" labeled min="-135" max="0"></md-slider>
         </div>
       </div>
       <div class="pos-orn-controllers">
         <div class="pos-orn-controller">
           <md-elevation></md-elevation>
           <div class="icon-slider">
+            <md-icon>arrow_range</md-icon>
+            <md-slider cmd="setpos" ang="0" labeled step=0.001 min=-0.10 max=0.10 value=0.01></md-slider>
+          </div>
+          <div class="icon-slider">
             <md-icon>open_in_full</md-icon>
-            <md-slider></md-slider>
+            <md-slider cmd="setpos" ang="1" labeled step=0.001 min=-0.10 max=0.10 value=0.01></md-slider>
           </div>
           <div class="icon-slider">
             <md-icon>height</md-icon>
-            <md-slider></md-slider>
-          </div>
-          <div class="icon-slider">
-            <md-icon>arrow_range</md-icon>
-            <md-slider></md-slider>
+            <md-slider cmd="setpos" ang="2" labeled step=0.001 min=-0.10 max=0.10 value=0.01></md-slider>
           </div>
         </div>
         <div class="pos-orn-controller">
           <md-elevation></md-elevation>
           <div class="icon-slider">
             <md-icon style="transform: scaleX(0.5)">refresh</md-icon>
-            <md-slider></md-slider>
+            <md-slider cmd="setorn" ang="0" labeled min=-30 max=30 value=0></md-slider>
           </div>
           <div class="icon-slider">
             <md-icon>refresh</md-icon>
-            <md-slider></md-slider>
+            <md-slider cmd="setorn" ang="1" labeled min=-30 max=30 value=0></md-slider>
           </div>
           <div class="icon-slider">
             <md-icon>360</md-icon>
-            <md-slider></md-slider>
+            <md-slider cmd="setorn" ang="2" labeled min=-30 max=30 value=0></md-slider>
           </div>
         </div>
+      </div>
+      <div class="connection-controller">
+        <md-elevation></md-elevation>
+        <div class="connection-buttons">
+          <md-text-button id="start_button">Avvia</md-text-button>
+          <md-text-button id="connect_button">Connetti</md-text-button>
+          <md-text-button id="send_button">Invia</md-text-button>
+          <md-text-button id="stop_button">Termina</md-text-button>
+        </div>
+        <md-outlined-text-field id="text_input" type="textarea" value="192.168.1.20 81"></md-outlined-text-field>
       </div>
     </div>
     <div class="legs-view">
       <md-elevation></md-elevation>
       <div class="leg-view">
-        <div class="leg"><div></div><div></div></div>
+        <div class="leg">
+          <div></div>
+          <div class="tibia"></div>
+        </div>
       </div>
       <div class="leg-view">
-        <div class="leg"><div></div><div></div></div>
+        <div class="leg">
+          <div></div>
+          <div class="tibia"></div>
+        </div>
       </div>
       <div class="leg-view">
-        <div class="leg"><div></div><div></div></div>
+        <div class="leg">
+          <div></div>
+          <div class="tibia"></div>
+        </div>
       </div>
       <div class="leg-view">
-        <div class="leg"><div></div><div></div></div>
+        <div class="leg">
+          <div></div>
+          <div class="tibia"></div>
+        </div>
+      </div>
+      <div class="legs-view-buttons">
+        <md-text-button id="walk_button">Cammina</md-text-button>
+        <md-text-button id="stop_button">Ferma</md-text-button>
+        <md-text-button id="reset_button">Reset</md-text-button>
+        <md-text-button id="sync_button">Sincronizza</md-text-button>
       </div>
     </div>
   </div>

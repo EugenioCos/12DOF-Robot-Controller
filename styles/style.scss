@@ -3,7 +3,7 @@
 @import '../node_modules/@material/web/typography/md-typescale-styles.scss';
 
 :root {
-    --md-sys-color-primary: #0acb4a;
+    --md-sys-color-primary: #0a9739;
 
     --md-linear-progress-track-height: 8px;
     --md-linear-progress-track-shape: 8px;
@@ -19,7 +19,7 @@
     --md-icon-font: 'Material Symbols Rounded';
 
     --width-controllers: 100%;
-    --angle-controller-margin: 0.7rem;
+    --margin-controller: 1rem;
 
     --leg-part-length: 10vmin;
 
@@ -43,6 +43,7 @@ h1 {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
+        margin: 0 var(--margin-controller);
     }
 
     :root {
@@ -64,8 +65,8 @@ h1 {
 }
 
 .angle-controller {
-    margin: var(--angle-controller-margin);
-    width: calc(50% - 2 * var(--angle-controller-margin));
+    margin: var(--margin-controller);
+    width: calc(50% - 2 * var(--margin-controller));
     border-radius: 1rem;
     transform: rotate(0deg);
 }
@@ -106,13 +107,38 @@ h1 {
     flex-grow: 1;
 }
 
+/*-------------------------------- CONNECTION */
+
+.connection-controller {
+    transform: rotate(0deg);
+    margin: var(--margin-controller);
+    border-radius: 1rem;
+}
+
+.connection-buttons {
+    display: flex;
+    flex-direction: row;
+    margin: 1rem 1rem 0 1rem;
+    padding: 0 1rem;
+    border-radius: 1rem;
+}
+
+.connection-buttons > * {
+    flex-grow: 1;
+}
+
+.connection-controller > md-outlined-text-field {
+    width: calc(100% - 2rem);
+    margin: 0rem 1rem 1rem 1rem;
+}
+
 /*-------------------------------- LEGS VIEW */
 
 .legs-view {
-    margin: var(--angle-controller-margin);
+    margin: var(--margin-controller);
     display: grid;
     grid-template-columns: 50% 50%;
-    grid-template-rows: 50% 50%;
+    grid-template-rows: 45% 45% 10%;
     border-radius: 1rem;
     transform: rotate(0deg);
 }
@@ -133,7 +159,7 @@ h1 {
     border-radius: 0.3rem;
 }
 
-.leg *:nth-child(2) {
+.tibia {
     transform: rotate(135deg);
     transform-origin: 0 0;
 }
@@ -142,4 +168,16 @@ h1 {
     .legs-view {
         width: calc(100% - var(--width-controllers));
     }
+}
+
+.legs-view-buttons {
+    display: flex;
+    flex-direction: row;
+    margin: 1rem 1rem 0rem 1rem;
+    padding: 0 1rem;
+    border-radius: 1rem;
+}
+
+.legs-view-buttons > * {
+    flex-grow: 1;
 }
