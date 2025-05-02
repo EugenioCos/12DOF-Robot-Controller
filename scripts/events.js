@@ -26,7 +26,6 @@ function handleResponse(data) {
 function EvalResponse(words) {
     while(words.length > 0){
         cmd = words.pop();
-        print(cmd);
         if(cmd == "Connesso") {
             alert("Connesso al rover!");
         } else if(cmd == "Angoli:"){
@@ -138,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .getElementById("send_button")
         .addEventListener("click", sendRover);
     document
-        .getElementById("stop_button")
+        .getElementById("terminate_button")
         .addEventListener("click", stopPython);
     document
         .getElementById("walk_button")

@@ -138,7 +138,7 @@ h1 {
     margin: var(--margin-controller);
     display: grid;
     grid-template-columns: 50% 50%;
-    grid-template-rows: 45% 45% 10%;
+    grid-template-rows: 40% 40% 20%;
     border-radius: 1rem;
     transform: rotate(0deg);
 }
@@ -171,10 +171,11 @@ h1 {
 }
 
 .legs-view-buttons {
+    width: auto;
     display: flex;
     flex-direction: row;
-    margin: 1rem 1rem 0rem 1rem;
-    padding: 0 1rem;
+    margin: 1rem 1rem 1rem 1rem;
+    padding: 1rem 1rem;
     border-radius: 1rem;
 }
 

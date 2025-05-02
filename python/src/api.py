@@ -1,3 +1,5 @@
+import threading
+
 class Api:
 
     def __init__(self, dati):
@@ -6,6 +8,7 @@ class Api:
                          "getang",     "stop",    "reset",    "sync"]
         self.handlers = [self.SetAng, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Connect, self.Disconnect,
                          self.GetAng, self.Stop, self.Reset, self.Sync]
+        self.x = None
 
 
     def polling(self):
@@ -58,7 +61,9 @@ class Api:
         self.ReportAngles()
 
     def Walk(self, input):
-        self.dati.Cammina(self.Sync)
+        if self.x is not None: self.x.join()
+        self.x = threading.Thread(target=self.dati.Cammina, args=(self.Sync,))
+        self.x.start()
 
     def Turn(self, input):
         self.dati.Gira(self.Sync)

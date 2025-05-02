@@ -20,9 +20,6 @@ class Wifi:
         print("Connesso")
 
     def Invia(self, out):
-        while(time.time() - self.lastTime < self.intervallo): # Invio
-            pass
-        self.lastTime = time.time()
         #print("Sending... "+out)
         try:
             self.s.send(out.encode())
@@ -68,6 +65,9 @@ class Wifi:
             return None
 
     def Comunica(self, angoli):
+        while(time.time() - self.lastTime < self.intervallo): # Invio
+            pass
+        self.lastTime = time.time()
         pulse = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         if not self.connesso: return
         for i in range(0, 12):

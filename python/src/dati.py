@@ -77,10 +77,6 @@ class Robot:
             self.Aggiorna()
             self.accXY = self.wifi.Comunica(self.angles)
             update_func()
-            try:
-                time.sleep(0.05)
-            except Exception as e:
-                print(e)
 
 
     # fa girare il robot
