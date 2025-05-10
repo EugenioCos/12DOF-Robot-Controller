@@ -52,8 +52,9 @@ class Wifi:
         else: return None
 
     def Disconnetti(self):
+        if not self.connesso: return
         print("disconnesso")
-        if self.connesso: self.s.close()
+        self.s.close()
         self.connesso = False
 
     def Ricevi(self):
@@ -68,8 +69,8 @@ class Wifi:
         while(time.time() - self.lastTime < self.intervallo): # Invio
             pass
         self.lastTime = time.time()
-        pulse = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         if not self.connesso: return
+        pulse = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         for i in range(0, 12):
             pulse[i] = angoli[i]
         pulse[2] = -pulse[2]
