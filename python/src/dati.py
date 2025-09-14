@@ -62,7 +62,6 @@ class Robot:
         self.camminando = True
         #print("Cammina")
         V = 0.5  # 0.5 velocità di movimento
-        # il ciclo si interrompe solo se il passo è completo
         while self.camminando or (self.planner.phi < 0.99 and not (self.planner.phi > 0.499 and self.planner.phi < 0.51)):
             
             # Xacc e Yacc è l'accelerazione ricavata dall'mpu e compliant è un valore true o false (in accXY)
@@ -84,7 +83,6 @@ class Robot:
         if self.Wrot == 0: return
         self.girando = True
         print("Gira (wrot: ", self.Wrot, ")")
-        # il ciclo si interrompe solo se il passo è completo
         while self.girando or (self.planner.phi < 0.99 and not (self.planner.phi > 0.499 and self.planner.phi < 0.51)):
             self.bodytoFeet1 = self.planner.loop(0, 0, self.Wrot, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
             self.Aggiorna()

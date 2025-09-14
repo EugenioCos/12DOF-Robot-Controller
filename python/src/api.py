@@ -1,7 +1,20 @@
 import threading
 
 class Api:
+    """
+        Questa classe è un'interfaccia da stdin per le seguenti operazioni:
 
+        Set angolo
+        Set pos
+        Set orn
+        cammina
+        gira
+        ferma
+        connetti
+        disconnetti
+        reset
+        sync
+    """
     def __init__(self, dati):
         self.dati = dati
         self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
@@ -102,19 +115,6 @@ class Api:
 
     def Sync(self, input=""):
         self.ReportAngles()
-# Operazioni:
-"""
-Setting angolo
-Setting pos
-Setting orn
-cammina
-gira
-ferma
-connetti
-disconnetti
-reset
 
-Getter angoli
-"""
 
     

@@ -54,7 +54,7 @@ class robotKinematics:
         self.bodytoBR4 = np.array([-self.Xdist/2, -self.Ydist/2, -self.height])
         self.bodytoBL4 = np.array([-self.Xdist / 2, self.Ydist / 2, -self.height])
         
-### INIZIO RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ###
+### INIZIO RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ######### By EC ##############
     def rotazione_x(self, angolo):
         return np.array([[1, 0, 0],
                         [0, np.cos(angolo), -np.sin(angolo)],
@@ -107,7 +107,7 @@ class robotKinematics:
         #print("risultato: \n" + str(bodyToFeet))
         return [bodyToFeet[0][0], bodyToFeet[1][0], bodyToFeet[2][0]]
 
-### FINE RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ###
+### FINE RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ##################################
 
     def solve(self, orn, pos, bodytoFeet):
         bodytoFR4 = np.asarray([bodytoFeet[0, 0], bodytoFeet[0, 1], bodytoFeet[0, 2]])
