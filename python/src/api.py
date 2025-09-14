@@ -4,11 +4,11 @@ class Api:
 
     def __init__(self, dati):
         self.dati = dati
-        self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "connect",    "disconnect",    
+        self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
                          "getang",     "stop",    "reset",    "sync"]
-        self.handlers = [self.SetAng, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Connect, self.Disconnect,
+        self.handlers = [self.SetAng, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Disconnect, self.Connect,
                          self.GetAng, self.Stop, self.Reset, self.Sync]
-        self.x = None
+        self.thread = None
 
 
     def polling(self):
@@ -36,7 +36,6 @@ class Api:
         n = int(words[1])
         angle = int(words[2])
         self.dati.SetAng(n, angle)
-        self.ReportAngles()
 
     # input expected: 'setpos [n] [value]'
     def SetPos(self, input):
@@ -61,9 +60,9 @@ class Api:
         self.ReportAngles()
 
     def Walk(self, input):
-        if self.x is not None: self.x.join()
-        self.x = threading.Thread(target=self.dati.Cammina, args=(self.Sync,))
-        self.x.start()
+        if self.thread is not None: self.thread.join()
+        self.thread = threading.Thread(target=self.dati.Cammina, args=(self.Sync,))
+        self.thread.start()
 
     def Turn(self, input):
         self.dati.Gira(self.Sync)
@@ -113,6 +112,7 @@ gira
 ferma
 connetti
 disconnetti
+reset
 
 Getter angoli
 """

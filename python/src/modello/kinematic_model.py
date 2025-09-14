@@ -105,6 +105,7 @@ class robotKinematics:
         #print("femur: \n" + str(vettFemur))
         #print("tibia: \n" + str(vettTibia))
         #print("risultato: \n" + str(bodyToFeet))
+        return [bodyToFeet[0][0], bodyToFeet[1][0], bodyToFeet[2][0]]
 
 ### FINE RIGHE AGGIUNTE PER IL CALCOLO DELLE COORDINATE A PARTIRE DAGLI ANGOLI ###
 

@@ -50,7 +50,6 @@ class Robot:
                 self.Reset()
                 print("Resetted")
                 return
-        #print(bodyToFeet)
         for i in range(0, 3):
             self.angles[i] = int(np.rad2deg(radsFR[i]))
             self.angles[i + 3] = int(np.rad2deg(radsFL[i]))
@@ -113,7 +112,7 @@ class Robot:
     # Imposta un angolo (utilizzato da vista leve)
     def SetAng(self, n, angolo):
         if self.InMovimento(): return
-        self.angles[n] = int(angolo)
+        self.angles[n] = angolo
         if n in range(0, 3):
             self.bodytoFeet1[0] = self.bodytoFeet0[0] = self.kinematics.calcolaPiede("FR", self.angles[0:3])
         if n in range(3, 6):
