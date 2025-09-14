@@ -4,10 +4,17 @@ const { connect } = require("net");
 const { text } = require("stream/consumers");
 
 let port = "81";
-let ip = "192.168.1.190";
+let ip = "192.168.1.68";
 
 const terminalConsole = new nodeConsole.Console(process.stdout, process.stderr);
-let sliders;
+let angles = [90,90,90,90,90,90,90,90,90,90,90,90];
+let sliderCoxa;
+let sliderFemur;
+let sliderTibia;
+let iSlidersPos;
+let iSlidersOrn;
+let angleController;
+let posOrnController;
 let connect_button;
 let legs;
 let tibias;
@@ -33,7 +40,7 @@ function send(text) {
     child.stdin.write(text+"\n\r");
 }
 
-// ------------------- MESSAGES ELABORATION ---------------------------------
+// ------------------- MESSAGES ELABORATION ------------------------------------------------------------------
 
 function handleResponse(data) {
     print(`[JS] received data: ${data}`);
@@ -48,49 +55,75 @@ function EvalResponse(words) {
             alert("Connesso al rover!");
             changeConnectButton();
         } else if(cmd == "Angoli:"){
-            let angoli = [0,0,0,0,0,0,0,0,0,0,0,0];
             for(let i = 0; i < 12; i++) {
-                angoli[i] = parseInt(words.pop());
+                angles[i] = parseInt(words.pop());
             }
-            updateLegs([angoli[1], angoli[7], angoli[4], angoli[10]]);
-            updateTibias([angoli[2], angoli[8], angoli[5], angoli[11]]);
-            updateSliders(angoli)
+            updateLegs([angles[1], angles[7], angles[4], angles[10]]);
+            updateTibias([angles[2], angles[8], angles[5], angles[11]]);
+            tabs = document.getElementById('ctrl_feet_tab');
+            ctrlFeetTab(tabs, true);
         }
     }
 }
 
-function updateLegs(angles) {
-    legs.forEach((leg, index) => {
-        leg.style.transform = `rotate(${-angles[index]}deg)`;
-    });
+// ------------------- TABS ------------------------------------------------------------------
+
+function poacTab(target) {
+    // Schedule a handler to run after the modify to the tabs
+    setTimeout(() => {
+        let tabActive = target.querySelector('md-secondary-tab[active]');
+        let poac = tabActive.getAttribute('po-ac');
+        angleController.style.display = (poac == 'ac' ? 'block' : 'none');
+        posOrnController.style.display = (poac == 'po' ? 'block' : 'none');
+    }, 0);
 }
 
-function updateTibias(angles) {
-    tibias.forEach((tibia, index) => {
-        tibia.style.transform = `rotate(${-angles[index]}deg)`;
-    });
+function ctrlFeetTab(target, by_fraction){
+    // Schedule a handler to run after the modify to the tabs
+    setTimeout(() => {
+        let tab = target.querySelector('md-secondary-tab[active]');
+        let i = parseInt(tab.getAttribute('i-feet'));
+        sliderCoxa.setAttribute('i', String(i*3));
+        sliderFemur.setAttribute('i', String(i*3+1));
+        sliderTibia.setAttribute('i', String(i*3+2));
+        updateSlider(sliderCoxa, i*3, by_fraction);
+        updateSlider(sliderFemur, i*3+1, by_fraction);
+        updateSlider(sliderTibia, i*3+2, by_fraction);
+    }, 0);
 }
 
-function updateSliders(angles) {
-    sliders.forEach((slider) => {
-        if(slider.getAttribute('cmd') != "setang") return;
-        let i = parseInt(slider.getAttribute('ang'));
-        if((i + 1) % 3 != 0) limit = parseInt(slider.getAttribute('max'));
-        else limit = parseInt(slider.getAttribute('min'));
-        if(Math.abs(angles[i]) - Math.abs(limit) > 0) return;
-        let input = slider.shadowRoot.querySelector('input');
-        input.value = angles[i];
-
-        let fraction = angles[i] / limit;
-        if(fraction > 1) return;
-        if((i + 1) % 3 == 0) fraction = 1 - fraction;
-        let container = slider.shadowRoot.querySelector('.container');
-        container.style.setProperty('--_end-fraction', fraction);
-        //print(container);
-    });
+function posOrnTab(target){
+    // Schedule a handler to run after the modify to the tabs
+    setTimeout(() => {
+        let tabActive = target.querySelector('md-secondary-tab[active]');
+        let posOrn = tabActive.getAttribute('pos-orn');
+        iSlidersPos.forEach((elem) => {
+            if(posOrn == "pos") elem.style.display = 'block';
+            else elem.style.display = 'none';
+        });
+        iSlidersOrn.forEach((elem) => {
+            if(posOrn == "orn") elem.style.display = 'block';
+            else elem.style.display = 'none';
+        });
+    }, 0);
 }
 
-// ------------------- BUTTONS ---------------------------------
+function updateSlider(slider, i, by_fraction) {
+    if((i + 1) % 3 != 0) limit = parseInt(slider.getAttribute('max'));
+    else limit = parseInt(slider.getAttribute('min'));
+    if(Math.abs(angles[i]) - Math.abs(limit) > 0) return;
+
+    let fraction = Math.abs(angles[i] / limit);
+    if(fraction > 1) return;
+    let container = slider.shadowRoot.querySelector('.container');
+    if((i + 1) % 3 == 0) fraction = 1 - fraction;
+    container.style.setProperty('--_end-fraction', fraction);
+
+    let input = slider.shadowRoot.querySelector('input');
+    input.value = angles[i];
+}
+
+// ------------------- CONNECTION CONTROLLER ------------------------------------------------------------------
 
 function startPython() {
     print("Initializing main.py");
@@ -102,13 +135,26 @@ function startPython() {
 function connectRover() {
     if(noChild()) return;
     let state = connect_button.innerHTML;
-    if(state == "Connetti") send("connect "+ip+" "+port);
-    else send("disconnetti");
+    if(state == "Connect") send("connect "+ip+" "+port);
+    else {
+        send("disconnect");
+        changeConnectButton();
+    }
+}
+
+function updateIpPort() {
+    value = textInput();
+    const regex = new RegExp(/\b\d{3}\.\d{3}\.\d{1,3}\.\d{1,3} \d{1,5}\b/);
+    if(regex.test(value)){
+        words = value.split(' ');
+        ip = words[0];
+        port = words[1];
+    }
 }
 
 function changeConnectButton(){
     let state = connect_button.innerHTML;
-    if(state == "Connetti") connect_button.innerHTML = "Disconnetti";
+    if(state == "Connetti") connect_button.innerHTML = "Disconnect";
     else connect_button.innerHTML = "Connetti";
 }
 
@@ -123,20 +169,25 @@ function stopPython() {
     child.kill(3);
 }
 
+
 function textInput() {
     target = document.getElementById('text_input');
     const internalInput = target.shadowRoot.querySelector('.input');
     return internalInput.value;
 }
 
-function updateIpPort() {
-    value = textInput();
-    const regex = new RegExp(/\b\d{3}\.\d{3}\.\d{1,3}\.\d{1,3} \d{1,5}\b/);
-    if(regex.test(value)){
-        words = value.split(' ');
-        ip = words[0];
-        port = words[1];
-    }
+// ------------------- LEGS VIEW ------------------------------------------------------------------
+
+function updateLegs(angles) {
+    legs.forEach((leg, index) => {
+        leg.style.transform = `rotate(${-angles[index]}deg)`;
+    });
+}
+
+function updateTibias(angles) {
+    tibias.forEach((tibia, index) => {
+        tibia.style.transform = `rotate(${-angles[index]}deg)`;
+    });
 }
 
 function walkRover() {
@@ -159,13 +210,34 @@ function syncRover() {
     send("sync");
 }
 
+// ------------------- EVENTS ------------------------------------------------------------------
+
 document.addEventListener("DOMContentLoaded", () => {
-    print("DOMContentLoaded");
+    sliderCoxa = document.getElementById('slider_coxa');
+    sliderFemur = document.getElementById('slider_femur');
+    sliderTibia = document.getElementById('slider_tibia');
+    iSlidersOrn = document.querySelectorAll('.orn');
+    iSlidersPos = document.querySelectorAll('.pos');
+    angleController = document.getElementById('angle-controller');
+    posOrnController = document.getElementById('pos-orn-controller');
+    connect_button = document.getElementById("connect_button");
+    legs = document.querySelectorAll(".leg");
+    tibias = document.querySelectorAll(".tibia");
+
+
     document
         .getElementById("start_button")
         .addEventListener("click", startPython);
-    connect_button = document.getElementById("connect_button");
     connect_button.addEventListener("click", connectRover);
+    document
+        .getElementById("poac_tab")
+        .addEventListener("change", event => poacTab(event.target));
+    document
+        .getElementById("ctrl_feet_tab")
+        .addEventListener("change", event => ctrlFeetTab(event.target, false));
+    document
+        .getElementById("pos_orn_tab")
+        .addEventListener("change", event => posOrnTab(event.target));
     document
         .getElementById("send_button")
         .addEventListener("click", sendRover);
@@ -187,19 +259,21 @@ document.addEventListener("DOMContentLoaded", () => {
     document
         .getElementById("text_input")
         .addEventListener("change", updateIpPort);
-    
-    sliders = document.querySelectorAll('md-slider');
-    sliders.forEach((slider) => {
-        slider.addEventListener('input', (event) => {
-            target = event.currentTarget;
-            let cmd = target.getAttribute('cmd');
-            let ang = target.getAttribute('ang');
-            input = target.shadowRoot.querySelector('input');
-            let value = input.ariaValueText;
-            send(`${cmd} ${ang} ${value}`);
-        });
+    document
+        .querySelectorAll('md-slider')
+        .forEach((slider) => {
+                slider.addEventListener('input', (event) => {
+                target = event.currentTarget;
+                let cmd = target.getAttribute('cmd');
+                let i = target.getAttribute('i');
+                input = target.shadowRoot.querySelector('input');
+                let value = input.ariaValueText;
+                if(cmd == "setang"){
+                    angles[i] = parseInt(value);
+                    updateLegs([angles[1], angles[7], angles[4], angles[10]]);
+                    updateTibias([angles[2], angles[8], angles[5], angles[11]]);
+                }
+                send(`${cmd} ${i} ${value}`);
+            });
     });
-
-    legs = document.querySelectorAll(".leg");
-    tibias = document.querySelectorAll(".tibia");
 });
