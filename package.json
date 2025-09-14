@@ -5,7 +5,7 @@
   "main": "scripts/main.js",
   "scripts": {
     "sass": "sass styles/style.scss styles/style.css",
-    "rollup": "npx rollup -p @rollup/plugin-node-resolve scripts/index.js -o scripts/bundle.js",
+    "rollup": "npx rollup -p @rollup/plugin-node-resolve scripts/md-index.js -o scripts/md-bundle.js",
     "start": "electron .",
     "test": "npm test"
   },
