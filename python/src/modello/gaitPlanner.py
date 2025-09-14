@@ -196,5 +196,3 @@ class trotGait:
 
         return self.bodytoFeet
 
-    def TestFix(self):
-        self.lastTime = time.time()

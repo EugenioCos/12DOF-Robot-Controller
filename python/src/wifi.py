@@ -14,7 +14,7 @@ class Wifi:
         self.intervallo = intervallo
         self.lastTime = time.time()
 
-    def Avvia(self, ip, port):
+    def Connetti(self, ip, port):
         try:
             self.s = socket.socket()
             self.s.settimeout(3)

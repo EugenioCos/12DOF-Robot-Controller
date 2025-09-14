@@ -4,7 +4,7 @@ from src.modello.kinematic_model import robotKinematics
 import time
 
 
-class Robot:
+class RobotController:
     def __init__(self, wifi):
         self.wifi = wifi
         self.kinematics = robotKinematics()
@@ -108,7 +108,7 @@ class Robot:
         self.accXY = self.wifi.Comunica(self.angles)
 
     # Imposta un angolo (utilizzato da vista leve)
-    def SetAng(self, n, angolo):
+    def SetAngolo(self, n, angolo):
         if self.InMovimento(): return
         self.angles[n] = angolo
         if n in range(0, 3):
@@ -121,7 +121,7 @@ class Robot:
             self.bodytoFeet1[3] = self.bodytoFeet0[3] = self.kinematics.calcolaPiede("BL", self.angles[9:12])
         self.wifi.Comunica(self.angles)
     
-    def GetAngles(self):
+    def GetAngoli(self):
         return self.angles
     
     def SetOrn(self, n, orn):

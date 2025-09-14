@@ -19,7 +19,7 @@ class Api:
         self.dati = dati
         self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
                          "getang",     "stop",    "reset",    "sync"]
-        self.handlers = [self.SetAng, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Disconnect, self.Connect,
+        self.handlers = [self.SetAngolo, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Disconnect, self.Connect,
                          self.GetAng, self.Stop, self.Reset, self.Sync]
         self.thread = None
 
@@ -41,14 +41,14 @@ class Api:
         print("[Python] invalid command: "+tmp)
 
     # input expected: 'setang [n] [angle]'
-    def SetAng(self, input):
+    def SetAngolo(self, input):
         words = input.split()
         if len(words) != 3:
             print("Invalid input")
             return
         n = int(words[1])
         angle = int(words[2])
-        self.dati.SetAng(n, angle)
+        self.dati.SetAngolo(n, angle)
 
     # input expected: 'setpos [n] [value]'
     def SetPos(self, input):
@@ -88,7 +88,7 @@ class Api:
             return
         ip = words[1]
         port = int(words[2])
-        self.dati.wifi.Avvia(ip, port)
+        self.dati.wifi.Connetti(ip, port)
 
     def Disconnect(self, input):
         self.dati.wifi.Disconnetti()
@@ -97,7 +97,7 @@ class Api:
         pass
 
     def ReportAngles(self):
-        angles = self.dati.GetAngles()
+        angles = self.dati.GetAngoli()
         string = "{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} "
         string = string.format(int(angles[0]), int(angles[1]), int(angles[2]), 
                                int(angles[3]), int(angles[4]), int(angles[5]),
