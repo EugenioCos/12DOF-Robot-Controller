@@ -66,7 +66,7 @@ function EvalResponse(words) {
     }
 }
 
-// ------------------- TABS ------------------------------------------------------------------
+// ------------------- TABS ---------------------------------------------------------------------------------
 
 function poacTab(target) {
     // Schedule a handler to run after the modify to the tabs
@@ -81,14 +81,14 @@ function poacTab(target) {
 function ctrlFeetTab(target, by_fraction){
     // Schedule a handler to run after the modify to the tabs
     setTimeout(() => {
-        let tab = target.querySelector('md-secondary-tab[active]');
-        let i = parseInt(tab.getAttribute('i-feet'));
-        sliderCoxa.setAttribute('i', String(i*3));
-        sliderFemur.setAttribute('i', String(i*3+1));
-        sliderTibia.setAttribute('i', String(i*3+2));
-        updateSlider(sliderCoxa, i*3, by_fraction);
-        updateSlider(sliderFemur, i*3+1, by_fraction);
-        updateSlider(sliderTibia, i*3+2, by_fraction);
+        let tabActive = target.querySelector('md-secondary-tab[active]');
+        let feet = parseInt(tabActive.getAttribute('i-feet'));
+        sliderCoxa.setAttribute('i', String(feet*3));
+        sliderFemur.setAttribute('i', String(feet*3+1));
+        sliderTibia.setAttribute('i', String(feet*3+2));
+        updateSlider(sliderCoxa, feet*3, by_fraction);
+        updateSlider(sliderFemur, feet*3+1, by_fraction);
+        updateSlider(sliderTibia, feet*3+2, by_fraction);
     }, 0);
 }
 
@@ -176,7 +176,7 @@ function textInput() {
     return internalInput.value;
 }
 
-// ------------------- LEGS VIEW ------------------------------------------------------------------
+// ------------------- LEGS VIEW -----------------------------------------------------------------------------
 
 function updateLegs(angles) {
     legs.forEach((leg, index) => {
@@ -210,7 +210,7 @@ function syncRover() {
     send("sync");
 }
 
-// ------------------- EVENTS ------------------------------------------------------------------
+// ------------------- EVENTS --------------------------------------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
     sliderCoxa = document.getElementById('slider_coxa');
