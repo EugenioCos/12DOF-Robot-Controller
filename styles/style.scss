@@ -34,16 +34,24 @@ h1 {
 
 /*-------------------------------- CONTAINER */
 
+.container {
+    margin: var(--margin-controller);
+    display: flex;
+    flex-direction: column;
+    gap: var(--margin-controller);
+}
+
 .controllers {
     width: var(--width-controllers);
+    height: fit-content;
+    transform: rotate(0deg);
+    border-radius: 1rem;
 }
 
 @media screen and (min-width: 768px) {
     .container {
-        display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
-        margin: 0 var(--margin-controller);
     }
 
     :root {
@@ -58,36 +66,31 @@ h1 {
 }
 
 /*-------------------------------- ANGLE CONTROLLERS */
-.angle-controllers {
+
+#angle-controller {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: var(--margin-controller);
 }
 
-.angle-controller {
-    margin: var(--margin-controller);
-    width: calc(50% - 2 * var(--margin-controller));
-    border-radius: 1rem;
-    transform: rotate(0deg);
-}
-
-.angle-controller h3 {
-    text-align: center;
-    @extend .md-typescale-label-large;
-}
-
-.angle-controller > md-slider {
-    min-width: 100%;
+#angle-controller > md-slider {
+    padding: 0.5rem 0;
+    min-width: 100%
 }
 
 /*-------------------------------- POS ORN CONTROLLERS */
 
-.pos-orn-controllers {
-    @extend .angle-controllers;
+#pos-orn-controller {
+    @extend #angle-controller;
+    display: none;
 }
 
-.pos-orn-controller {
-    @extend .angle-controller;
+.pos {
+    display: block;
+}
+
+.orn {
+    display: none;
 }
 
 .icon-slider{
@@ -95,7 +98,8 @@ h1 {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-items: center;
-    padding-left: 1rem;
+    padding: 0.5rem 0 0.5rem 1rem;
+    min-width: 100%
 }
 
 .icon-slider md-icon{
@@ -135,12 +139,12 @@ h1 {
 /*-------------------------------- LEGS VIEW */
 
 .legs-view {
-    margin: var(--margin-controller);
     display: grid;
     grid-template-columns: 50% 50%;
     grid-template-rows: 40% 40% 20%;
     border-radius: 1rem;
     transform: rotate(0deg);
+    max-height: 70vh;
 }
 
 .leg-view {

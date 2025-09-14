@@ -6,83 +6,61 @@
 </head>
 
 <body>
-  <script src="scripts/bundle.js"></script>
+  <script src="scripts/md-bundle.js"></script>
   <h1 class="md-typescale-headline-medium">Quadruped Robot Controller</h1>
+  <!-- angle and pos-orn controller + view -->
   <div class="container">
+    <!-- angle and pos-orn controller -->
     <div class="controllers">
-      <div class="angle-controllers">
-        <div class="angle-controller">
-          <md-elevation></md-elevation>
-          <h3>Front left</h3>
-          <md-slider cmd="setang" ang="3" labeled value="90" max="180"></md-slider>
-          <md-slider cmd="setang" ang="4" labeled max="180"></md-slider>
-          <md-slider cmd="setang" ang="5" labeled min="-135" max="0"></md-slider>
-        </div>
-        <div class="angle-controller">
-          <md-elevation></md-elevation>
-          <h3>Back left</h3>
-          <md-slider cmd="setang" ang="9" labeled value="90" max="180"></md-slider>
-          <md-slider cmd="setang" ang="10" labeled max="180"></md-slider>
-          <md-slider cmd="setang" ang="11" labeled min="-135" max="0"></md-slider>
-        </div>
-        <div class="angle-controller">
-          <md-elevation></md-elevation>
-          <h3>Front right</h3>
-          <md-slider cmd="setang" ang="0" labeled value="90" max="180"></md-slider>
-          <md-slider cmd="setang" ang="1" labeled max="180"></md-slider>
-          <md-slider cmd="setang" ang="2" labeled min="-135" max="0"></md-slider>
-        </div>
-        <div class="angle-controller">
-          <md-elevation></md-elevation>
-          <h3>Back right</h3>
-          <md-slider cmd="setang" ang="6" labeled value="90" max="180"></md-slider>
-          <md-slider cmd="setang" ang="7" labeled max="180"></md-slider>
-          <md-slider cmd="setang" ang="8" labeled min="-135" max="0"></md-slider>
-        </div>
+      <!-- pos-orn / angle tab -->
+      <md-elevation></md-elevation>
+      <md-tabs id="poac_tab" auto-activate="true">
+        <md-secondary-tab po-ac="ac" active>Angles control</md-secondary-tab>
+        <md-secondary-tab po-ac="po">Pos orn control</md-secondary-tab>
+      </md-tabs>
+      <!-- angle controller -->
+      <div id="angle-controller">
+        <!-- feets tab -->
+        <md-tabs id="ctrl_feet_tab" auto-activate="true">
+          <md-secondary-tab i-feet="0" active>FR</md-secondary-tab>
+          <md-secondary-tab i-feet="1">FL</md-secondary-tab>
+          <md-secondary-tab i-feet="2">BR</md-secondary-tab>
+          <md-secondary-tab i-feet="3">BL</md-secondary-tab>
+        </md-tabs>
+        <!-- feet angles -->
+        <md-slider id="slider_coxa" cmd="setang" i="3" labeled value="90" max="180"></md-slider>
+        <md-slider id="slider_femur" cmd="setang" i="4" labeled max="180"></md-slider>
+        <md-slider id="slider_tibia" cmd="setang" i="5" labeled min="-135" max="0"></md-slider>
       </div>
-      <div class="pos-orn-controllers">
-        <div class="pos-orn-controller">
-          <md-elevation></md-elevation>
-          <div class="icon-slider">
-            <md-icon>arrow_range</md-icon>
-            <md-slider cmd="setpos" ang="0" labeled step=0.001 min=-0.05 max=0.05 value=0.0></md-slider>
-          </div>
-          <div class="icon-slider">
-            <md-icon>open_in_full</md-icon>
-            <md-slider cmd="setpos" ang="1" labeled step=0.001 min=-0.03 max=0.03 value=0.0></md-slider>
-          </div>
-          <div class="icon-slider">
-            <md-icon>height</md-icon>
-            <md-slider cmd="setpos" ang="2" labeled step=0.001 min=-0.03 max=0.03 value=0.0></md-slider>
-          </div>
+      <!-- pos-orn controller -->
+      <div id="pos-orn-controller">
+        <!-- pos / orn tab -->
+        <md-tabs id="pos_orn_tab" auto-activate="true">
+          <md-secondary-tab pos-orn="pos" active>pos</md-secondary-tab>
+          <md-secondary-tab pos-orn="orn">orn</md-secondary-tab>
+        </md-tabs>
+        <!-- pos-orn sliders (only pos or only orn visible at same time) -->
+        <div class="icon-slider">
+          <md-icon class="pos">arrow_range</md-icon>
+          <md-slider class="pos" cmd="setpos" i="0" labeled step=0.001 min=-0.05 max=0.05 value=0.0></md-slider>
+          <md-icon class="orn" style="transform: scaleX(0.5)">refresh</md-icon>
+          <md-slider class="orn" cmd="setorn" i="0" labeled min=-30 max=30 value=0></md-slider>
         </div>
-        <div class="pos-orn-controller">
-          <md-elevation></md-elevation>
-          <div class="icon-slider">
-            <md-icon style="transform: scaleX(0.5)">refresh</md-icon>
-            <md-slider cmd="setorn" ang="0" labeled min=-30 max=30 value=0></md-slider>
-          </div>
-          <div class="icon-slider">
-            <md-icon>refresh</md-icon>
-            <md-slider cmd="setorn" ang="1" labeled min=-30 max=30 value=0></md-slider>
-          </div>
-          <div class="icon-slider">
-            <md-icon>360</md-icon>
-            <md-slider cmd="setorn" ang="2" labeled min=-30 max=30 value=0></md-slider>
-          </div>
+        <div class="icon-slider">
+          <md-icon class="pos">open_in_full</md-icon>
+          <md-slider class="pos" cmd="setpos" i="1" labeled step=0.001 min=-0.03 max=0.03 value=0.0></md-slider>
+          <md-icon class="orn">refresh</md-icon>
+          <md-slider class="orn" cmd="setorn" i="1" labeled min=-30 max=30 value=0></md-slider>
         </div>
-      </div>
-      <div class="connection-controller">
-        <md-elevation></md-elevation>
-        <div class="connection-buttons">
-          <md-text-button id="start_button">Avvia</md-text-button>
-          <md-text-button id="connect_button">Connetti</md-text-button>
-          <md-text-button id="send_button">Invia</md-text-button>
-          <md-text-button id="terminate_button">Termina</md-text-button>
+        <div class="icon-slider">
+          <md-icon class="pos">height</md-icon>
+          <md-slider class="pos" cmd="setpos" i="2" labeled step=0.001 min=-0.03 max=0.03 value=0.0></md-slider>
+          <md-icon class="orn">360</md-icon>
+          <md-slider class="orn" cmd="setorn" i="2" labeled min=-30 max=30 value=0></md-slider>
         </div>
-        <md-outlined-text-field id="text_input" type="textarea" value="192.168.1.190 81"></md-outlined-text-field>
       </div>
     </div>
+    <!-- view -->
     <div class="legs-view">
       <md-elevation></md-elevation>
       <div class="leg-view">
@@ -109,12 +87,24 @@
           <div class="tibia"></div>
         </div>
       </div>
+      <!-- view buttons -->
       <div class="legs-view-buttons">
-        <md-text-button id="walk_button">Cammina</md-text-button>
-        <md-text-button id="stop_button">Ferma</md-text-button>
+        <md-text-button id="walk_button">Walk</md-text-button>
+        <md-text-button id="stop_button">Stop</md-text-button>
         <md-text-button id="reset_button">Reset</md-text-button>
-        <md-text-button id="sync_button">Sincronizza</md-text-button>
+        <md-text-button id="sync_button">Sync</md-text-button>
       </div>
     </div>
+  </div>
+  <!-- connection controller -->
+  <div class="connection-controller">
+    <md-elevation></md-elevation>
+    <div class="connection-buttons">
+      <md-text-button id="start_button">Start</md-text-button>
+      <md-text-button id="connect_button">Connect</md-text-button>
+      <md-text-button id="send_button">Send</md-text-button>
+      <md-text-button id="terminate_button">Kill</md-text-button>
+    </div>
+    <md-outlined-text-field id="text_input" type="textarea" value="192.168.1.68 81"></md-outlined-text-field>
   </div>
 </body>
