@@ -1,6 +1,12 @@
 import socket
 import time
 
+# Questa classe permette le seguenti operazioni:
+# - connessione
+# - disconnessione
+# - invio
+# - ricezione
+# - invio degli angoli e ricezione dei dati del giroscopio
 
 class Wifi:
     def __init__(self, intervallo):
@@ -29,35 +35,18 @@ class Wifi:
     def Invia(self, out):
         #print("Sending... "+out)
         try:
-            self.s.send(out.encode())
+            return self.s.send(out.encode())
         except:
             print("[Wifi] Invio Fallito")
-            return None
+            self.Disconnetti()
 
     def Ricevi(self):
         try:
             return self.s.recv(1024).decode("utf-8").rstrip('\n\r')
         except ConnectionResetError:
-            return None
+            self.Disconnetti()
         except socket.timeout:
-            return None
-        
-    def RiceviRisposta(self):
-        risposta = ""
-        while '>' not in risposta:
-            tmp = self.Ricevi()
-            if tmp == None: break
-            else: risposta += tmp
-        return risposta
-        #print(str(risposta))
-
-    def checkGyro(self, risposta):
-        if '#' in risposta: # gyro data
-            risposta = risposta[1:-1]
-            dati = [float(tmp) for tmp in risposta.split('#')]
-            if len(dati) == 2:
-                return dati
-            print("[Wifi] Parsing data error, data: "+str(dati))
+            self.Disconnetti()
         return None
 
     def Comunica(self, angoli):
@@ -72,6 +61,23 @@ class Wifi:
         gyroData = self.checkGyro(risposta)
         return gyroData
 
+    def RiceviRisposta(self):
+        risposta = ""
+        while '>' not in risposta:
+            tmp = self.Ricevi()
+            if tmp == None: break
+            else: risposta += tmp
+        return risposta
+        #print(str(risposta))
+
+    def checkGyro(self, risposta):
+        if risposta != None and '#' in risposta:
+            risposta = risposta[1:-1]
+            dati = [float(tmp) for tmp in risposta.split('#')]
+            if len(dati) == 2:
+                return dati
+            print("[Wifi] Parsing data error, data: "+str(dati))
+        return None
     
     def AngToCmd(self, angles):
         pulse = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
