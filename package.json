@@ -1,5 +1,5 @@
 {
-  "name": "materiald",
+  "name": "robot-quad",
   "version": "1.0.0",
   "description": "test",
   "main": "scripts/main.js",
@@ -7,7 +7,7 @@
     "sass": "sass styles/style.scss styles/style.css",
     "rollup": "npx rollup -p @rollup/plugin-node-resolve scripts/md-index.js -o scripts/md-bundle.js",
     "start": "electron .",
-    "test": "npm test"
+    "test": "echo 'empty test command' && exit"
   },
   "author": "",
   "license": "ISC",
