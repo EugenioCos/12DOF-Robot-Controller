@@ -15,9 +15,16 @@ class Wifi:
             self.s.connect((ip, port))
         except socket.error as exc:
             print("Server non creato: ", exc)
+            self.connesso = False
             return
         self.connesso = True
         print("Connesso")
+    
+    def Disconnetti(self):
+        if not self.connesso: return
+        print("disconnesso")
+        self.s.close()
+        self.connesso = False
 
     def Invia(self, out):
         #print("Sending... "+out)
@@ -26,36 +33,6 @@ class Wifi:
         except:
             print("[Wifi] Invio Fallito")
             return None
-        
-        timeout = time.time() + 3
-        risposta = "" # Ricezione risposta
-        while '>' not in risposta:
-            if (time.time() >= timeout):
-                self.Disconnetti()
-                break
-            tmp = self.Ricevi()
-            if tmp == None: return None
-            else: risposta += tmp
-        #print(str(risposta))
-        # Ricavare dalla risposta i valori di accelerazioni (se mpu attivo)
-            
-        if '#' in risposta: # gyro data
-            risposta = risposta[1:-1]
-            print("cutted: "+risposta)
-            risposta.split('#');
-            dati = []
-            for dato in risposta:
-                dati.append(float(dato))
-            if len(dati) != 2:
-                print("[Wifi] Parsing data error, data: "+str(dati))
-            return dati
-        else: return None
-
-    def Disconnetti(self):
-        if not self.connesso: return
-        print("disconnesso")
-        self.s.close()
-        self.connesso = False
 
     def Ricevi(self):
         try:
@@ -64,28 +41,50 @@ class Wifi:
             return None
         except socket.timeout:
             return None
+        
+    def RiceviRisposta(self):
+        risposta = ""
+        while '>' not in risposta:
+            tmp = self.Ricevi()
+            if tmp == None: break
+            else: risposta += tmp
+        return risposta
+        #print(str(risposta))
+
+    def checkGyro(self, risposta):
+        if '#' in risposta: # gyro data
+            risposta = risposta[1:-1]
+            dati = [float(tmp) for tmp in risposta.split('#')]
+            if len(dati) == 2:
+                return dati
+            print("[Wifi] Parsing data error, data: "+str(dati))
+        return None
 
     def Comunica(self, angoli):
-        while(time.time() - self.lastTime < self.intervallo): # Invio
-            pass
-        self.lastTime = time.time()
         if not self.connesso: return
+        while(time.time() - self.lastTime < self.intervallo):
+            time.sleep(self.intervallo/20)
+        self.lastTime = time.time()
+
+        command = self.AngToCmd(angoli)
+        self.Invia(command)
+        risposta = self.RiceviRisposta()
+        gyroData = self.checkGyro(risposta)
+        return gyroData
+
+    
+    def AngToCmd(self, angles):
         pulse = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         for i in range(0, 12):
-            pulse[i] = angoli[i]
-        pulse[2] = -pulse[2]
-        pulse[5] = -pulse[5]
-        pulse[8] = -pulse[8]
-        pulse[11] = -pulse[11]
-        for i in range(0, 12):
+            pulse[i] = angles[i] 
+            pulse[i] *= (-1 if (i-2)%3==0 else 1)
             pulse[i] = self.AngToPls(pulse[i])
         # Input
         comando = "<{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}#{8}#{9}#{10}#{11}>"
-        command = comando.format(int(pulse[0]), int(pulse[1]), int(pulse[2]),
+        return comando.format(int(pulse[0]), int(pulse[1]), int(pulse[2]),
                                  int(pulse[3]), int(pulse[4]), int(pulse[5]),
                                  int(pulse[6]), int(pulse[7]), int(pulse[8]),
                                  int(pulse[9]), int(pulse[10]), int(pulse[11]))
-        return self.Invia(command)
 
     def AngToPls(self, angle):
         return 500 + int((float(angle / 9) * 100))
