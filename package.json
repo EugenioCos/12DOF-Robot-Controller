@@ -6,7 +6,7 @@
   "scripts": {
     "sass": "sass styles/style.scss styles/style.css",
     "rollup": "npx rollup -p @rollup/plugin-node-resolve scripts/md-index.js -o scripts/md-bundle.js",
-    "start": "electron .",
+    "start": "npm run sass && electron .",
     "test": "echo 'empty test command' && exit"
   },
   "author": "",

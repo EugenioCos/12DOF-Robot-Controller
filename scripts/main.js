@@ -4,7 +4,7 @@ const path = require("path");
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 1280,
-    height: 720,
+    height: 900,
     webPreferences: {
       preload: path.join(__dirname, "events.js"),
       contextIsolation: true,
@@ -15,7 +15,7 @@ const createWindow = () => {
   win.loadFile('index.html');
   // Open the DevTools.
   win.setFullScreen(true);
-  win.webContents.openDevTools();
+  //win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {

@@ -186,3 +186,33 @@ h1 {
 .legs-view-buttons > * {
     flex-grow: 1;
 }
+
+/*-------------------------------- WALK AND TURN CONTROL */
+
+.walk-turn-control {
+    position: absolute;
+    top: 25%;
+    left: 35%;
+    width: 30%;
+    aspect-ratio: 1 / 1;
+}
+
+.walk-turn-control #walk-direction-line{
+    border-radius: 2px;
+    background-color: green;
+    height: 50%;
+    left: calc(50% - 1px);
+    position: relative;
+    top: 0;
+    transform: rotate(-90deg);
+    transform-origin: 50% 100%;
+    width: 3px;
+}
+
+.walk-turn-control img{
+    position: absolute;
+    left: 25%;
+    top: 30%;
+    width: 50%;
+    height: 40%;
+}
