@@ -18,7 +18,8 @@ class Api:
 
     def parseInput(self, n, input):
         words = input.split()
-        return (words[1:] if len(words) == n+1 else None)
+        words.pop(0)
+        return (words if len(words) == n else None)
     
     def __init__(self, dati):
         self.dati = dati
@@ -41,25 +42,25 @@ class Api:
                     self.handlers[i](tmp)
                     print(" End", flush=True)
                 except Exception as e:
-                    print("Error in handler:", e)
+                    print("Error in ", cmd, e)
                 return
         print("[Python] invalid command: "+tmp)
 
     # input expected: 'setang [n] [angle]'
     def SetAngolo(self, input):
         n, angle = self.parseInput(2, input)
-        self.dati.SetAngolo(n, angle)
+        self.dati.SetAngolo(int(n), int(angle))
 
     # input expected: 'setpos [n] [value]'
     def SetPos(self, input):
         n, value = self.parseInput(2, input)
-        self.dati.SetPos(n, value)
+        self.dati.SetPos(int(n), float(value))
         self.ReportAngles()
 
     # input expected: 'setorn [n] [value]'
     def SetOrn(self, input):
         n, value = self.parseInput(2, input)
-        self.dati.SetOrn(n, value)
+        self.dati.SetOrn(int(n), int(value))
         self.ReportAngles()
 
     def Walk(self, input):

@@ -5,13 +5,13 @@ This repository contains a simple program to control a 12 dof robot dog
 
 ## The robot
 
-A lot of years ago i built a 3d printed quadruped robot following this project:
+A lot of years ago I built a 3d printed quadruped robot following this project:
 
 https://hackaday.io/project/171456-diy-hobby-servos-quadruped-robot
 
-Due to limited budget i decided to replace the raspberry pi with a cheaper AVR microcontroller to move motors and an ESP32 to communicate with the computer for the value to set on each joint.
+Due to limited budget I decided to replace the raspberry pi with a cheaper AVR microcontroller to move motors and an ESP32 to communicate with the computer for the value to set on each joint.
 
-The ESP32 in on the front on the robot and communicate via UART protocol with the AVR chip inside on another board connected with all 12 motor.
+The ESP32 is on the front on the robot and communicate via UART protocol with the AVR chip inside on another board connected with all 12 motor.
 
 On the ESP32 board I mounted a display that shows commands frequency, commands data and connection state. 
 There is also the support for a camera that I planned to add and in another project I have coded the necessary to capture a photo and send it via tcp stream at a decent rate on the same board of the robot.
@@ -22,12 +22,12 @@ A thing to be added is the gyro sensor, in the past I have mounted it on the rob
 
 ## The program
 
-For the following task i used code from the robot project linked before:
+For the following task I used code from the robot project linked before:
 
 - calculate all 12 joints values from coordinates body-to-feet of each feet
 - update feets position to make robot moves by specific speed, direction, self-rotation, step-time and step-plan.
 
-At first my goal was to make a graphic interface for me to use the robot project's code with my setup, so i created a python tkinter interface.
+At first my goal was to make a graphic interface for me to use the robot project's code with my setup, so I created a python tkinter interface.
 
 ![](docs/gui_tk.png)
 

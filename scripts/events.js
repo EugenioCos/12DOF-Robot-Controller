@@ -3,6 +3,8 @@ const nodeConsole = require("console");
 const { connect } = require("net");
 const { text } = require("stream/consumers");
 
+const DEBUG = true;
+
 let port = "81";
 let ip = "192.168.1.68";
 
@@ -23,6 +25,7 @@ let tibias;
 let child;
 
 function print(data) {
+    if(!DEBUG) return;
     terminalConsole.log(data);
     console.log(data);
 }
