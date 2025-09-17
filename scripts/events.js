@@ -202,6 +202,11 @@ function walkRover() {
     send("walk");
 }
 
+function turnRover() {
+    if(noChild()) return;
+    send("turn");
+}
+
 function stopRover() {
     if(noChild()) return;
     send("stop");
@@ -304,6 +309,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document
         .getElementById("terminate_button")
         .addEventListener("click", stopPython);
+    document
+        .getElementById("turn_button")
+        .addEventListener("click", turnRover);
     document
         .getElementById("walk_button")
         .addEventListener("click", walkRover);

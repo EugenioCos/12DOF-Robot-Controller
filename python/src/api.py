@@ -75,7 +75,9 @@ class Api:
             self.ReportAngles()
 
     def Turn(self, input):
-        self.dati.Gira(self.Sync)
+        if self.thread is not None: self.thread.join()
+        self.thread = threading.Thread(target=self.dati.Gira, args=(self.Sync,))
+        self.thread.start()
 
     # input expected: 'connect [ip] [port]'
     def Connect(self, input):
@@ -118,7 +120,6 @@ class Api:
         max_angle = 35
         max_wrot = 1.5
         scaled = int(value) * max_wrot/max_angle
-        print("in: ", value, ", wrot: ", scaled)
         self.dati.SetWRot(scaled)
 
 

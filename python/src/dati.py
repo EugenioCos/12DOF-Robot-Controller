@@ -80,11 +80,10 @@ class RobotController:
     # fa girare il robot
     def Gira(self, update_func):
         if self.InMovimento(): return
-        if self.Wrot == 0: return
+        if self.Wrot <= 0.35: return
         self.girando = True
-        print("Gira (wrot: ", self.Wrot, ")")
-        while self.girando or (self.planner.phi < 0.99 and not (self.planner.phi > 0.499 and self.planner.phi < 0.51)):
-            self.bodytoFeet1 = self.planner.loop(0, 0, self.Wrot, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
+        while self.girando or (self.planner.phi < 0.98 and not (self.planner.phi > 0.49 and self.planner.phi < 0.51)):
+            self.bodytoFeet1 = self.planner.loop(0, self.angle, self.Wrot, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
             self.Aggiorna()
             self.accXY = self.wifi.Comunica(self.angles)
             update_func()
