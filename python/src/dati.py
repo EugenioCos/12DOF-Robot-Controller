@@ -145,3 +145,5 @@ class RobotController:
     def SetAngle(self, ang):
         self.angle = ang
     
+    def SetWRot(self, wrot):
+        self.Wrot = wrot

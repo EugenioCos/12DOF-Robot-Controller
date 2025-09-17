@@ -24,9 +24,9 @@ class Api:
     def __init__(self, dati):
         self.dati = dati
         self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
-                         "getang",     "stop",    "reset",    "sync"]
+                         "getang",     "stop",    "reset",    "sync", "setwrot"]
         self.handlers = [self.SetAngolo, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Disconnect, self.Connect,
-                         self.GetAng, self.Stop, self.Reset, self.Sync]
+                         self.GetAng, self.Stop, self.Reset, self.Sync, self.SetWRot]
         self.thread = None
 
 
@@ -112,6 +112,14 @@ class Api:
 
     def Sync(self, input=""):
         self.ReportAngles()
+
+    def SetWRot(self, input):
+        value = self.parseInput(1, input)[0]
+        max_angle = 35
+        max_wrot = 1.5
+        scaled = int(value) * max_wrot/max_angle
+        print("in: ", value, ", wrot: ", scaled)
+        self.dati.SetWRot(scaled)
 
 
     

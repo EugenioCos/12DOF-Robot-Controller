@@ -227,10 +227,14 @@ function calculateTurnAngle(x, y) {
 }
 
 function updateTurnDirection(x, y) {
-    // if(noChild()) return;
-    angle = calculateTurnAngle(x, y);
-    updateTurnPointer(angle+180);
-    // send("walk "+String(angle));
+    if(noChild()) return;
+    angle = calculateTurnAngle(x, y) + 180;
+    if(angle > -10 && angle < 10) angle = 0;
+    if(angle > 180) angle -= 360;
+    if(angle > 35) angle = 35;
+    if(angle < -35) angle = -35;
+    updateTurnPointer(angle);
+    send("setwrot "+String(angle));
 }
 
 function updateTurnPointer(angle) {
@@ -248,6 +252,12 @@ function updateWalkDirection(x, y) {
     if(noChild()) return;
     angle = calculateWalkAngle(x, y);
     angleFromLeft = angle+180;
+    mod90 = angleFromLeft%90;
+    if(mod90 > 80) // approssimazione per eccesso
+        angleFromLeft += 90 - (mod90);
+    if(mod90 < 10) // approssimazione per difetto
+        angleFromLeft -= mod90;
+    console.log(angleFromLeft);
     updateWalkDirectionLine(angleFromLeft-90);
     send("walk "+String(angleFromLeft));
 }
