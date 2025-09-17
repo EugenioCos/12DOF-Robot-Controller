@@ -189,7 +189,7 @@ h1 {
 
 /*-------------------------------- WALK AND TURN CONTROL */
 
-.walk-turn-control {
+#walk-turn-controller {
     position: absolute;
     top: 25%;
     left: 35%;
@@ -197,7 +197,7 @@ h1 {
     aspect-ratio: 1 / 1;
 }
 
-.walk-turn-control #walk-direction-line{
+#walk-turn-controller #walk-direction-line{
     border-radius: 2px;
     background-color: green;
     height: 50%;
@@ -209,7 +209,7 @@ h1 {
     width: 3px;
 }
 
-.walk-turn-control img{
+#walk-turn-controller img{
     position: absolute;
     left: 25%;
     top: 30%;

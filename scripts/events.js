@@ -15,6 +15,8 @@ let iSlidersPos;
 let iSlidersOrn;
 let angleController;
 let posOrnController;
+let walkTurnController;
+let walkDirectionLine;
 let connect_button;
 let legs;
 let tibias;
@@ -210,6 +212,19 @@ function syncRover() {
     send("sync");
 }
 
+// ------------------- WALK AND TURN CONTROL -----------------------------------------------------------------
+
+function updateWalkDirection(x, y) {
+    xCenter = walkTurnController.scrollWidth/2;
+    yCenter = walkTurnController.scrollHeight/2;
+    dx = x - xCenter;
+    dy = y - yCenter;
+    angle = Math.atan2(dy, dx);
+    angleFromTop = angle + Math.PI/2;
+    angleInDeg = angleFromTop * (180 / Math.PI);
+    walkDirectionLine.style.transform = `rotate(${angleInDeg}deg)`;
+}
+
 // ------------------- EVENTS --------------------------------------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -220,6 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
     iSlidersPos = document.querySelectorAll('.pos');
     angleController = document.getElementById('angle-controller');
     posOrnController = document.getElementById('pos-orn-controller');
+    walkTurnController = document.getElementById('walk-turn-controller');
+    walkDirectionLine = document.getElementById('walk-direction-line');
     connect_button = document.getElementById("connect_button");
     legs = document.querySelectorAll(".leg");
     tibias = document.querySelectorAll(".tibia");
@@ -275,5 +292,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 send(`${cmd} ${i} ${value}`);
             });
+    });
+    walkTurnController.addEventListener('click', event => {
+        if(!event.target.isEqualNode(walkTurnController)) return;
+        updateWalkDirection(event.offsetX, event.offsetY);
     });
 });
