@@ -63,7 +63,7 @@
     <!-- view -->
     <div class="legs-view">
       <md-elevation></md-elevation>
-      <div class="leg-view">
+      <div class="leg-view front">
         <div class="leg">
           <div></div>
           <div class="tibia"></div>
@@ -75,7 +75,7 @@
           <div class="tibia"></div>
         </div>
       </div>
-      <div class="leg-view">
+      <div class="leg-view front">
         <div class="leg">
           <div></div>
           <div class="tibia"></div>
@@ -87,10 +87,16 @@
           <div class="tibia"></div>
         </div>
       </div>
-      <!-- walk direction and turn speed control-->
+      <!-- walk direction and turn control-->
       <div id="walk-turn-controller">
-        <div id="walk-direction-line"></div>
-        <img src="images/robotTop.png" alt="[robot image]">
+        <div id="turn-controller">
+          <div class="pointer"></div>
+          <!-- <img src="images/turnControl.png" alt="[turn]"> -->
+        </div>
+        <div id="walk-controller">
+          <div id="walk-direction-line"></div>
+          <img src="images/robotTop.png" alt="[robot image]"/>
+        </div>
       </div>
       
       <!-- view buttons -->

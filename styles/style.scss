@@ -147,8 +147,12 @@ h1 {
     max-height: 70vh;
 }
 
-.leg-view {
-    padding: 20% 40%;
+.leg-view{
+    padding: 20% 20% 20% 50%;
+}
+
+.legs-view .front{
+    padding: 20% 40% 20% 25%;
 }
 
 .leg {
@@ -190,29 +194,43 @@ h1 {
 /*-------------------------------- WALK AND TURN CONTROL */
 
 #walk-turn-controller {
+    display: flex;
+    flex-direction: row;
     position: absolute;
     top: 25%;
     left: 35%;
-    width: 30%;
+    height: 25%;
+    margin: 0 auto;
+}
+
+#turn-controller{
+    background-image: url('../images/turnControl.png');
+    background-size: 100% 100%;
+    aspect-ratio: 186 / 806;
+}
+
+#walk-controller{
+    background-image: url('../images/circonferenzaDirezione.jpg');
+    background-size: 100% 100%;
     aspect-ratio: 1 / 1;
 }
 
-#walk-turn-controller #walk-direction-line{
+#walk-controller #walk-direction-line{
     border-radius: 2px;
     background-color: green;
     height: 50%;
-    left: calc(50% - 1px);
     position: relative;
-    top: 0;
+    left: calc(50% - 1px);
     transform: rotate(-90deg);
     transform-origin: 50% 100%;
     width: 3px;
 }
 
-#walk-turn-controller img{
+#walk-controller img{
     position: absolute;
-    left: 25%;
+    // 19% è il rapporto tra turn-controller width e walk-controller width (determinato dalle immagini)
+    left: calc((100% - 19%) / 4) + 19%;
     top: 30%;
-    width: 50%;
+    width: calc((100% - 19%) / 2);
     height: 40%;
 }
