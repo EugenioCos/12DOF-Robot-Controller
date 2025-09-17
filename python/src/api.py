@@ -118,7 +118,7 @@ class Api:
     def SetWRot(self, input):
         value = self.parseInput(1, input)[0]
         max_angle = 35
-        max_wrot = 1.5
+        max_wrot = 1.
         scaled = int(value) * max_wrot/max_angle
         self.dati.SetWRot(scaled)
 
