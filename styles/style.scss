@@ -198,7 +198,7 @@ h1 {
     flex-direction: row;
     position: absolute;
     top: 25%;
-    left: 35%;
+    left: 30%;
     height: 25%;
     margin: 0 auto;
 }
@@ -217,6 +217,16 @@ h1 {
     background-color: #0a9739;
     border-radius: 50%;
     transform-origin: 525% 50%;
+}
+
+#speed-controller{
+    @extend #turn-controller;
+    background-image: url('../images/speedControl.png');
+}
+
+#speed-controller .pointer{
+    @extend .pointer;
+    margin-left: 17%;
 }
 
 #walk-controller{
@@ -238,9 +248,9 @@ h1 {
 
 #walk-controller img{
     position: absolute;
-    // 19% è il rapporto tra turn-controller width e walk-controller width (determinato dalle immagini)
-    left: calc((100% - 19%) / 4) + 19%;
+    // 16% è il rapporto tra la larghezza delle immagini laterali e l'intero walk-turn div (costante per immagini)
+    left: calc((100% - 32%) / 4) + 16%;
     top: 30%;
-    width: calc((100% - 19%) / 2);
+    width: calc((100% - 32%) / 2);
     height: 40%;
 }

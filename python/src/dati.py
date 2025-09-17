@@ -28,6 +28,7 @@ class RobotController:
         self.pos = np.array([0., 0., 0.]) # spostamenti xyz
         self.angle = 0  # 0. direzione (0. avanti)
         self.Wrot = 0  # 0. rotazione (0. fermo)
+        self.V = 0.5  # 0.5 velocità di movimento
         self.Aggiorna()
         self.accXY = self.wifi.Comunica(self.angles)
 
@@ -61,7 +62,6 @@ class RobotController:
         if self.InMovimento(): return
         self.camminando = True
         #print("Cammina")
-        V = 0.5  # 0.5 velocità di movimento
         while self.camminando or (self.planner.phi < 0.99 and not (self.planner.phi > 0.499 and self.planner.phi < 0.51)):
             
             # Xacc e Yacc è l'accelerazione ricavata dall'mpu e compliant è un valore true o false (in accXY)
@@ -69,9 +69,8 @@ class RobotController:
             # forceModule , forceAngle , Vcompliant , collision = control.bodyCompliant(Xacc , Yacc , True)
             # self.bodytoFeet1  = trot.loop(V + Vcompliant , self.angle + forceAngle , 0, self.tplanner, self.offsetplanner , bodytoFeet0)
             
-            # print(self.planner.phi)
             # wrot = 0 in quanto il cammino non considera la rotazione
-            self.bodytoFeet1 = self.planner.loop(V, self.angle, 0, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
+            self.bodytoFeet1 = self.planner.loop(self.V, self.angle, 0, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
             self.Aggiorna()
             self.accXY = self.wifi.Comunica(self.angles)
             update_func()
@@ -146,3 +145,6 @@ class RobotController:
     
     def SetWRot(self, wrot):
         self.Wrot = wrot
+
+    def SetSpeed(self, speed):
+        self.V = speed

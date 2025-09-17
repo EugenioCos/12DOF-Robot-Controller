@@ -24,9 +24,9 @@ class Api:
     def __init__(self, dati):
         self.dati = dati
         self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
-                         "getang",     "stop",    "reset",    "sync", "setwrot"]
+                         "getang",     "stop",    "reset",    "sync", "setwrot", "setspeed"]
         self.handlers = [self.SetAngolo, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Disconnect, self.Connect,
-                         self.GetAng, self.Stop, self.Reset, self.Sync, self.SetWRot]
+                         self.GetAng, self.Stop, self.Reset, self.Sync, self.SetWRot, self.SetSpeed]
         self.thread = None
 
 
@@ -121,6 +121,13 @@ class Api:
         max_wrot = 1.5
         scaled = int(value) * max_wrot/max_angle
         self.dati.SetWRot(scaled)
+
+    def SetSpeed(self, input):
+        min_speed = 0.2
+        max_speed = 0.8
+        scale = self.parseInput(1, input)[0]
+        speed = min_speed + (max_speed - min_speed ) * float(scale)
+        self.dati.SetSpeed(float(speed))
 
 
     

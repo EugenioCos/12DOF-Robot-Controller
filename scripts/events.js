@@ -19,6 +19,8 @@ let angleController;
 let posOrnController;
 let turnController;
 let turnPointer;
+let speedController;
+let speedPointer;
 let walkController;
 let walkDirectionLine;
 let connect_button;
@@ -246,6 +248,18 @@ function updateTurnPointer(angle) {
     turnPointer.style.transform = `rotate(${angle}deg)`;
 }
 
+function updateSpeed(x){
+    if(noChild()) return;
+    maxDelta = speedController.scrollHeight * 0.25;
+    center = speedController.scrollHeight / 2;
+    delta = x - center;
+    if(delta > maxDelta) delta = maxDelta;
+    if(delta < -maxDelta) delta = -maxDelta;
+    speedPointer.style.transform = `translateY(${delta}px)`;
+    scale = 0.5 - delta / (maxDelta*2);
+    send("setspeed "+String(scale));
+}
+
 function calculateWalkAngle(x, y) {
     xCenter = walkController.scrollWidth/2;
     yCenter = walkController.scrollHeight/2;
@@ -283,6 +297,8 @@ document.addEventListener("DOMContentLoaded", () => {
     posOrnController = document.getElementById('pos-orn-controller');
     turnController = document.getElementById('turn-controller');
     turnPointer = turnController.querySelector('.pointer');
+    speedController = document.getElementById('speed-controller');
+    speedPointer = speedController.querySelector('.pointer');
     walkController = document.getElementById('walk-controller');
     walkDirectionLine = document.getElementById('walk-direction-line');
     connect_button = document.getElementById("connect_button");
@@ -344,12 +360,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 send(`${cmd} ${i} ${value}`);
             });
     });
-    walkController.addEventListener('click', event => {
-        if(!event.target.isEqualNode(walkController)) return;
-        updateWalkDirection(event.offsetX, event.offsetY);
-    });
     turnController.addEventListener('click', event => {
         if(!event.target.isEqualNode(turnController)) return;
         updateTurnDirection(event.offsetX, event.offsetY);
+    });
+    speedController.addEventListener('click', event => {
+        if(!event.target.isEqualNode(speedController)) return;
+        updateSpeed(event.offsetY);
+    });
+    walkController.addEventListener('click', event => {
+        if(!event.target.isEqualNode(walkController)) return;
+        updateWalkDirection(event.offsetX, event.offsetY);
     });
 });
