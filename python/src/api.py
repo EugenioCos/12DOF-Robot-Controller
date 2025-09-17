@@ -63,9 +63,15 @@ class Api:
         self.ReportAngles()
 
     def Walk(self, input):
-        if self.thread is not None: self.thread.join()
-        self.thread = threading.Thread(target=self.dati.Cammina, args=(self.Sync,))
-        self.thread.start()
+        angle = self.parseInput(1, input)
+        if angle == None: # walk
+            if self.thread is not None: self.thread.join()
+            self.thread = threading.Thread(target=self.dati.Cammina, args=(self.Sync,))
+            self.thread.start()
+        else: # set direction
+            if not angle[0].isdigit(): return
+            self.dati.SetAngle(int(angle[0]))
+            self.ReportAngles()
 
     def Turn(self, input):
         self.dati.Gira(self.Sync)

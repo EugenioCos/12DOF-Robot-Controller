@@ -222,9 +222,11 @@ function calculateAngle(x, y) {
 }
 
 function updateWalkDirection(x, y) {
+    if(noChild()) return;
     angle = calculateAngle(x, y);
     angleFromLeft = angle + 180;
     walkDirectionLine.style.transform = `rotate(${angleFromLeft - 90}deg)`;
+    send("walk "+String(angleFromLeft));
 }
 
 // ------------------- EVENTS --------------------------------------------------------------------------------
