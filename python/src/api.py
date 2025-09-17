@@ -15,6 +15,11 @@ class Api:
         reset
         sync
     """
+
+    def parseInput(self, n, input):
+        words = input.split()
+        return (words[1:] if len(words) == n+1 else None)
+    
     def __init__(self, dati):
         self.dati = dati
         self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
@@ -42,33 +47,18 @@ class Api:
 
     # input expected: 'setang [n] [angle]'
     def SetAngolo(self, input):
-        words = input.split()
-        if len(words) != 3:
-            print("Invalid input")
-            return
-        n = int(words[1])
-        angle = int(words[2])
+        n, angle = self.parseInput(2, input)
         self.dati.SetAngolo(n, angle)
 
     # input expected: 'setpos [n] [value]'
     def SetPos(self, input):
-        words = input.split()
-        if len(words) != 3:
-            print("Invalid input")
-            return
-        n = int(words[1])
-        value = float(words[2])
+        n, value = self.parseInput(2, input)
         self.dati.SetPos(n, value)
         self.ReportAngles()
 
     # input expected: 'setorn [n] [value]'
     def SetOrn(self, input):
-        words = input.split()
-        if len(words) != 3:
-            print("Invalid input")
-            return
-        n = int(words[1])
-        value = float(words[2])
+        n, value = self.parseInput(2, input)
         self.dati.SetOrn(n, value)
         self.ReportAngles()
 

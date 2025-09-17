@@ -214,15 +214,17 @@ function syncRover() {
 
 // ------------------- WALK AND TURN CONTROL -----------------------------------------------------------------
 
-function updateWalkDirection(x, y) {
+function calculateAngle(x, y) {
     xCenter = walkTurnController.scrollWidth/2;
     yCenter = walkTurnController.scrollHeight/2;
-    dx = x - xCenter;
-    dy = y - yCenter;
-    angle = Math.atan2(dy, dx);
-    angleFromTop = angle + Math.PI/2;
-    angleInDeg = angleFromTop * (180 / Math.PI);
-    walkDirectionLine.style.transform = `rotate(${angleInDeg}deg)`;
+    angRad = Math.atan2(y - yCenter, x - xCenter);
+    return  Math.round(angRad * (180 / Math.PI));
+}
+
+function updateWalkDirection(x, y) {
+    angle = calculateAngle(x, y);
+    angleFromLeft = angle + 180;
+    walkDirectionLine.style.transform = `rotate(${angleFromLeft - 90}deg)`;
 }
 
 // ------------------- EVENTS --------------------------------------------------------------------------------

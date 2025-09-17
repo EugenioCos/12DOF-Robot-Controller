@@ -142,3 +142,6 @@ class RobotController:
     def GetPos(self):
         return [tmp * 100 for tmp in self.pos] # from m to cm
     
+    def SetAngle(self, ang):
+        self.angle = ang
+    
