@@ -17,6 +17,8 @@ let iSlidersPos;
 let iSlidersOrn;
 let angleController;
 let posOrnController;
+let turnController;
+let turnPointer;
 let walkController;
 let walkDirectionLine;
 let connect_button;
@@ -217,7 +219,25 @@ function syncRover() {
 
 // ------------------- WALK AND TURN CONTROL -----------------------------------------------------------------
 
-function calculateAngle(x, y) {
+function calculateTurnAngle(x, y) {
+    xCenter = turnController.scrollWidth*3.15;
+    yCenter = turnController.scrollHeight/2;
+    angRad = Math.atan2(y - yCenter, x - xCenter);
+    return  Math.round(angRad * (180 / Math.PI));
+}
+
+function updateTurnDirection(x, y) {
+    // if(noChild()) return;
+    angle = calculateTurnAngle(x, y);
+    updateTurnPointer(angle+180);
+    // send("walk "+String(angle));
+}
+
+function updateTurnPointer(angle) {
+    turnPointer.style.transform = `rotate(${angle}deg)`;
+}
+
+function calculateWalkAngle(x, y) {
     xCenter = walkController.scrollWidth/2;
     yCenter = walkController.scrollHeight/2;
     angRad = Math.atan2(y - yCenter, x - xCenter);
@@ -226,13 +246,13 @@ function calculateAngle(x, y) {
 
 function updateWalkDirection(x, y) {
     if(noChild()) return;
-    angle = calculateAngle(x, y);
-    angleFromLeft = angle + 180;
-    updateWalkDirection(angle-90);
-    send("walk "+String(angle));
+    angle = calculateWalkAngle(x, y);
+    angleFromLeft = angle+180;
+    updateWalkDirectionLine(angleFromLeft-90);
+    send("walk "+String(angleFromLeft));
 }
 
-function updateWalkDirection(angle) {
+function updateWalkDirectionLine(angle) {
     walkDirectionLine.style.transform = `rotate(${angle}deg)`;
 }
 
@@ -246,6 +266,8 @@ document.addEventListener("DOMContentLoaded", () => {
     iSlidersPos = document.querySelectorAll('.pos');
     angleController = document.getElementById('angle-controller');
     posOrnController = document.getElementById('pos-orn-controller');
+    turnController = document.getElementById('turn-controller');
+    turnPointer = turnController.querySelector('.pointer');
     walkController = document.getElementById('walk-controller');
     walkDirectionLine = document.getElementById('walk-direction-line');
     connect_button = document.getElementById("connect_button");
@@ -307,5 +329,9 @@ document.addEventListener("DOMContentLoaded", () => {
     walkController.addEventListener('click', event => {
         if(!event.target.isEqualNode(walkController)) return;
         updateWalkDirection(event.offsetX, event.offsetY);
+    });
+    turnController.addEventListener('click', event => {
+        if(!event.target.isEqualNode(turnController)) return;
+        updateTurnDirection(event.offsetX, event.offsetY);
     });
 });
