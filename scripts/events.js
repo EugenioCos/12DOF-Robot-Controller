@@ -187,6 +187,27 @@ function textInput() {
 
 // ------------------- LEGS VIEW -----------------------------------------------------------------------------
 
+function mouseToCoord(xMouse, yMouse){
+    legLength = 0.1 * Math.min(window.innerWidth, window.innerHeight); // 10% = div femur or coxa lenght
+    x = xMouse * 0.1 / legLength; // 0.1 = coxa or femur lenght
+    y = yMouse * 0.1 / legLength; // 0.1 = coxa or femur lenght
+    return [x, y];
+}
+
+function updateLeg(legView, xPage, yPage){
+    rect = legView.getBoundingClientRect();
+    offsetY = Math.round(legView.clientHeight * 0.2);
+    offsetX = Math.round(legView.clientWidth * 0.4);
+    x = xPage - (rect.x + offsetX);
+    y = yPage - (rect.y + offsetY) + 7;
+    console.log("x: ", rect.x, rect.y);
+    console.log("offset: ", offsetX, offsetY);
+    console.log("coord: ", x, y);
+    coords = mouseToCoord(x, y);
+    feet = legView.getAttribute("feet");
+    send("setfeetpos "+String(coords[0])+" "+String(-coords[1])+" "+feet);
+}
+
 function updateLegs(angles) {
     legs.forEach((leg, index) => {
         leg.style.transform = `rotate(${-angles[index]}deg)`;
@@ -371,5 +392,14 @@ document.addEventListener("DOMContentLoaded", () => {
     walkController.addEventListener('click', event => {
         if(!event.target.isEqualNode(walkController)) return;
         updateWalkDirection(event.offsetX, event.offsetY);
+    });
+    document.querySelectorAll(".leg-view").forEach(legView => {
+        const handler = (event) => updateLeg(legView, event.pageX, event.pageY);
+        legView.addEventListener('mousedown', () => {
+            legView.addEventListener('mousemove', handler);
+        });
+        legView.addEventListener('click', () => {
+            legView.removeEventListener('mousemove', handler);
+        });
     });
 });

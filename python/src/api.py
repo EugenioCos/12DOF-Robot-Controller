@@ -4,9 +4,12 @@ class Api:
     """
         Questa classe è un'interfaccia da stdin per le seguenti operazioni:
 
-        Set angolo
-        Set pos
-        Set orn
+        set angolo
+        set pos
+        set orn
+        set feet pos
+        set wrot
+        set speed
         cammina
         gira
         ferma
@@ -24,9 +27,9 @@ class Api:
     def __init__(self, dati):
         self.dati = dati
         self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
-                         "getang",     "stop",    "reset",    "sync", "setwrot", "setspeed"]
+                         "getang",     "stop",    "reset",    "sync", "setwrot", "setspeed", "setfeetpos"]
         self.handlers = [self.SetAngolo, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Disconnect, self.Connect,
-                         self.GetAng, self.Stop, self.Reset, self.Sync, self.SetWRot, self.SetSpeed]
+                         self.GetAng, self.Stop, self.Reset, self.Sync, self.SetWRot, self.SetSpeed, self.SetFeetPos]
         self.thread = None
 
 
@@ -129,5 +132,9 @@ class Api:
         speed = min_speed + (max_speed - min_speed ) * float(scale)
         self.dati.SetSpeed(float(speed))
 
+    def SetFeetPos(self, input):
+        x, z, feet = self.parseInput(3, input)
+        self.dati.SetFeetPos([float(x), float(z)], feet)
+        self.ReportAngles()
 
     
