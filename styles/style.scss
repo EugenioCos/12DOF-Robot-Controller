@@ -139,6 +139,7 @@ h1 {
 /*-------------------------------- LEGS VIEW */
 
 .legs-view {
+    aspect-ratio: 3 / 3;
     display: grid;
     grid-template-columns: 50% 50%;
     grid-template-rows: 40% 40% 20%;

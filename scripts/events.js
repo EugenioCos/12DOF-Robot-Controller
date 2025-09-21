@@ -195,6 +195,7 @@ function mouseToCoord(xMouse, yMouse){
 }
 
 function updateLeg(legView, xPage, yPage){
+    if(noChild()) return;
     rect = legView.getBoundingClientRect();
     offsetY = Math.round(legView.clientHeight * 0.2);
     offsetX = Math.round(legView.clientWidth * 0.4);
@@ -396,6 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".leg-view").forEach(legView => {
         const handler = (event) => updateLeg(legView, event.pageX, event.pageY);
         legView.addEventListener('mousedown', () => {
+            if(noChild()) return;
             legView.addEventListener('mousemove', handler);
         });
         legView.addEventListener('click', () => {
