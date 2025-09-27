@@ -25,6 +25,8 @@ let speedPointer;
 let walkController;
 let walkDirectionLine;
 let connect_button;
+let legsView;
+let videoView;
 let legs;
 let tibias;
 let child;
@@ -188,6 +190,14 @@ function textInput() {
     return internalInput.value;
 }
 
+// ------------------- VIDEO VIEW ----------------------------------------------------------------------------
+
+function showVideoView(show) {
+    videoView.style.display = show ? 'block' : 'none';
+    legsView.style.display = show ? 'none' : 'grid';
+    console.log(show);
+}
+
 // ------------------- LEGS VIEW -----------------------------------------------------------------------------
 
 function mouseToCoord(xMouse, yMouse){
@@ -330,7 +340,8 @@ document.addEventListener("DOMContentLoaded", () => {
     connect_button = document.getElementById("connect_button");
     legs = document.querySelectorAll(".leg");
     tibias = document.querySelectorAll(".tibia");
-
+    legsView = document.getElementById('legs-view');
+    videoView = document.getElementById('video-view');
 
     document
         .getElementById("start_button")
@@ -407,5 +418,9 @@ document.addEventListener("DOMContentLoaded", () => {
         legView.addEventListener('click', () => {
             legView.removeEventListener('mousemove', handler);
         });
+    });
+    document.getElementById("record-switch").addEventListener('change', (event) => {
+        let inner = event.target.shadowRoot.querySelector('.switch');
+        showVideoView(inner.classList.contains('selected'));
     });
 });
