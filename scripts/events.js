@@ -137,6 +137,7 @@ function updateSlider(slider, i, by_fraction) {
 // ------------------- CONNECTION CONTROLLER ------------------------------------------------------------------
 
 function startPython() {
+    if(!noChild()) return;
     print("Initializing main.py");
     child = spawn("python3", ["-i", "python/main.py"]);
     print(`PID: ${child.pid}`);
@@ -165,8 +166,8 @@ function updateIpPort() {
 
 function changeConnectButton(){
     let state = connect_button.innerHTML;
-    if(state == "Connetti") connect_button.innerHTML = "Disconnect";
-    else connect_button.innerHTML = "Connetti";
+    if(state == "Connect") connect_button.innerHTML = "Disconnect";
+    else connect_button.innerHTML = "Connect";
 }
 
 function sendRover(){
