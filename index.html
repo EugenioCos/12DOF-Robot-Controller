@@ -64,7 +64,7 @@
         <div id="video-controller">
           <label>
             Record
-            <md-switch selected></md-switch>
+            <md-switch id="record-switch"></md-switch>
           </label>
         </div>
       </div>
@@ -83,34 +83,38 @@
       </div>
     </div>
     <!-- view -->
-    <div class="legs-view">
+    <div id="view">
       <md-elevation></md-elevation>
-      <div class="leg-view front" feet="FR">
-        <div class="leg">
-          <div></div>
-          <div class="tibia"></div>
+      <div id="legs-view">
+        <div class="leg-view front" feet="FR">
+          <div class="leg">
+            <div></div>
+            <div class="tibia"></div>
+          </div>
+        </div>
+        <div class="leg-view" feet="BR">
+          <div class="leg">
+            <div></div>
+            <div class="tibia"></div>
+          </div>
+        </div>
+        <div class="leg-view front" feet="FL">
+          <div class="leg">
+            <div></div>
+            <div class="tibia"></div>
+          </div>
+        </div>
+        <div class="leg-view" feet="BL">
+          <div class="leg">
+            <div></div>
+            <div class="tibia"></div>
+          </div>
         </div>
       </div>
-      <div class="leg-view" feet="BR">
-        <div class="leg">
-          <div></div>
-          <div class="tibia"></div>
-        </div>
-      </div>
-      <div class="leg-view front" feet="FL">
-        <div class="leg">
-          <div></div>
-          <div class="tibia"></div>
-        </div>
-      </div>
-      <div class="leg-view" feet="BL">
-        <div class="leg">
-          <div></div>
-          <div class="tibia"></div>
-        </div>
-      </div>
+      <!-- video view -->
+      <div id="video-view"></div>
       <!-- view buttons -->
-      <div class="legs-view-buttons">
+      <div id="view-buttons">
         <md-text-button id="walk_button">Walk</md-text-button>
         <md-text-button id="turn_button">Turn</md-text-button>
         <md-text-button id="stop_button">Stop</md-text-button>
