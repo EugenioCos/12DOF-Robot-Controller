@@ -111,6 +111,19 @@ h1 {
     flex-grow: 1;
 }
 
+/*-------------------------------- VIDEO CONTROLLER */
+
+#video-controller {
+    aspect-ratio: 2/1;
+    display: none;
+}
+
+#video-controller label {
+    justify-self: center;
+    font-size: larger;
+    min-height: 100%;
+}
+
 /*-------------------------------- CONNECTION */
 
 .connection-controller {

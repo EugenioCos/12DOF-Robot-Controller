@@ -17,6 +17,7 @@
       <md-tabs id="poac_tab" auto-activate="true">
         <md-secondary-tab po-ac="ac" active>Angles control</md-secondary-tab>
         <md-secondary-tab po-ac="po">Pos orn control</md-secondary-tab>
+        <md-secondary-tab po-ac="vc">Video control</md-secondary-tab>
       </md-tabs>
       <!-- angle controller -->
       <div id="angle-controller">
@@ -58,6 +59,12 @@
           <md-icon class="orn">360</md-icon>
           <md-slider class="orn" cmd="setorn" i="2" labeled min=-30 max=30 value=0></md-slider>
         </div>
+      </div>
+      <div id="video-controller">
+        <label>
+          Record
+          <md-switch selected></md-switch>
+        </label>
       </div>
     </div>
     <!-- view -->

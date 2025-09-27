@@ -3,7 +3,7 @@ const nodeConsole = require("console");
 const { connect } = require("net");
 const { text } = require("stream/consumers");
 
-const DEBUG = true;
+const DEBUG = false;
 
 let port = "81";
 let ip = "192.168.1.68";
@@ -17,6 +17,7 @@ let iSlidersPos;
 let iSlidersOrn;
 let angleController;
 let posOrnController;
+let videoController;
 let turnController;
 let turnPointer;
 let speedController;
@@ -84,6 +85,7 @@ function poacTab(target) {
         let poac = tabActive.getAttribute('po-ac');
         angleController.style.display = (poac == 'ac' ? 'block' : 'none');
         posOrnController.style.display = (poac == 'po' ? 'block' : 'none');
+        videoController.style.display = (poac == 'vc' ? 'block' : 'none');
     }, 0);
 }
 
@@ -317,6 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
     iSlidersPos = document.querySelectorAll('.pos');
     angleController = document.getElementById('angle-controller');
     posOrnController = document.getElementById('pos-orn-controller');
+    videoController = document.getElementById('video-controller');
     turnController = document.getElementById('turn-controller');
     turnPointer = turnController.querySelector('.pointer');
     speedController = document.getElementById('speed-controller');
