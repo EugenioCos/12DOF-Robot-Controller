@@ -1,14 +1,17 @@
 const { exec, spawn } = require("child_process");
 const nodeConsole = require("console");
 const { connect } = require("net");
+const { type } = require("os");
 const { text } = require("stream/consumers");
 
-const DEBUG = false;
+const DEBUG = true;
 
 let port = "81";
-let ip = "192.168.1.68";
+let ip = "192.168.1.29";
 
 const terminalConsole = new nodeConsole.Console(process.stdout, process.stderr);
+let buffer = new Uint8Array(42240);
+let bufferIndex = 0;
 let angles = [90,90,90,90,90,90,90,90,90,90,90,90];
 let sliderCoxa;
 let sliderFemur;
@@ -27,6 +30,7 @@ let walkDirectionLine;
 let connect_button;
 let legsView;
 let videoView;
+let canvas;
 let legs;
 let tibias;
 let child;
@@ -139,11 +143,14 @@ function updateSlider(slider, i, by_fraction) {
 // ------------------- CONNECTION CONTROLLER ------------------------------------------------------------------
 
 function startPython() {
-    if(!noChild()) return;
+    if(child && !child.killed) return;
     print("Initializing main.py");
-    child = spawn("python3", ["-i", "python/main.py"]);
+    child = spawn("python3", ["-u", "python/main.py"], {
+        stdio: ["pipe", "pipe", "pipe", "pipe"]
+    });
     print(`PID: ${child.pid}`);
     child.stdout.on("data", (data) => handleResponse(data));
+    child.stdio[3].on("data", (data) => updateVideo(data));
 }
 
 function connectRover() {
@@ -193,9 +200,39 @@ function textInput() {
 // ------------------- VIDEO VIEW ----------------------------------------------------------------------------
 
 function showVideoView(show) {
-    videoView.style.display = show ? 'block' : 'none';
+    videoView.style.display = show ? 'flex' : 'none';
     legsView.style.display = show ? 'none' : 'grid';
     console.log(show);
+}
+
+function updateVideo(array) {
+    data = new Uint8Array(array);
+    if(42240 - bufferIndex > data.length) {
+        buffer.set(data, bufferIndex);
+        bufferIndex += data.length;
+    } else {
+        buffer.set(data.slice(0, 42240 - bufferIndex), bufferIndex);
+        data = data.slice(42240 - bufferIndex, data.length);
+        bufferIndex = 42240;
+    }
+    if(bufferIndex < 42240) return;
+
+    const ctx = canvas.getContext("2d");
+    const imageData = ctx.createImageData(240, 176);
+    for (let i = 0; i < buffer.length; i++) {
+        const val = buffer[i];
+        imageData.data[i * 4 + 0] = val; // R
+        imageData.data[i * 4 + 1] = val; // G
+        imageData.data[i * 4 + 2] = val; // B
+        imageData.data[i * 4 + 3] = 255; // Alpha
+    }
+    ctx.putImageData(imageData, 0, 0);
+    console.log("Image updated");
+
+    if(data.length > 0) {
+        buffer.set(data, 0);
+        bufferIndex = data.length;
+    } else bufferIndex = 0;
 }
 
 // ------------------- LEGS VIEW -----------------------------------------------------------------------------
@@ -342,6 +379,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tibias = document.querySelectorAll(".tibia");
     legsView = document.getElementById('legs-view');
     videoView = document.getElementById('video-view');
+    canvas = document.getElementById('video-canvas');
 
     document
         .getElementById("start_button")

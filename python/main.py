@@ -2,8 +2,15 @@
 from src.dati import RobotController
 from src.wifi import Wifi
 from src.api import Api
+import os
 
-wifi = Wifi(1 / 30)
+image_fd = os.fdopen(3, "wb")
+
+def sendImage(array):
+    image_fd.write(array)
+    image_fd.flush()
+
+wifi = Wifi(1 / 15, sendImage)
 
 dati = RobotController(wifi)
 

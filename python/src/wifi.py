@@ -1,5 +1,6 @@
 import socket
 import time
+import numpy as np
 
 # Questa classe permette le seguenti operazioni:
 # - connessione
@@ -9,10 +10,12 @@ import time
 # - invio degli angoli e ricezione dei dati del giroscopio
 
 class Wifi:
-    def __init__(self, intervallo):
+    def __init__(self, intervallo, sendImage):
         self.connesso = False
         self.intervallo = intervallo
         self.lastTime = time.time()
+        self.sendImage = sendImage
+        self.imgSize = 42240
 
     def Connetti(self, ip, port):
         try:
@@ -48,15 +51,31 @@ class Wifi:
         except socket.timeout:
             self.Disconnetti()
         return None
+    
+    def RiceviImg(self):
+        received = 0
+        chunk_size = 4096
+        array_from_client = bytearray()
+        while received < self.imgSize:
+            try:
+                to_recv = self.imgSize - received if self.imgSize - received < chunk_size else chunk_size
+                data = self.s.recv(to_recv)
+            except Exception as e: 
+                print(e)
+                return
+            received += len(data)
+            array_from_client.extend(data)
+        self.sendImage(array_from_client)
 
-    def Comunica(self, angoli):
+    def Comunica(self, angoli, withImg):
         if not self.connesso: return
         while(time.time() - self.lastTime < self.intervallo):
             time.sleep(self.intervallo/20)
         self.lastTime = time.time()
 
-        command = self.AngToCmd(angoli)
+        command = self.AngToCmd(angoli, withImg)
         self.Invia(command)
+        if(withImg): self.RiceviImg()
         risposta = self.RiceviRisposta()
         gyroData = self.checkGyro(risposta)
         return gyroData
@@ -79,14 +98,14 @@ class Wifi:
             print("[Wifi] Parsing data error, data: "+str(dati))
         return None
     
-    def AngToCmd(self, angles):
+    def AngToCmd(self, angles, withImg):
         pulse = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         for i in range(0, 12):
             pulse[i] = angles[i] 
             pulse[i] *= (-1 if (i-2)%3==0 else 1)
             pulse[i] = self.AngToPls(pulse[i])
         # Input
-        comando = "<{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}#{8}#{9}#{10}#{11}>"
+        comando = "<{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}#{8}#{9}#{10}#{11}" + ("P" if withImg else ">")
         return comando.format(int(pulse[0]), int(pulse[1]), int(pulse[2]),
                                  int(pulse[3]), int(pulse[4]), int(pulse[5]),
                                  int(pulse[6]), int(pulse[7]), int(pulse[8]),

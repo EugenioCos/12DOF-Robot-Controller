@@ -38,13 +38,14 @@ h1 {
 }
 
 .controllers {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 50% 50%;
     width: var(--width-controllers);
-    height: 100%;
-    min-height: 100%;
 }
 
 .tab {
-    height: fit-content;
+    height: max-content;
     transform: rotate(0deg);
     border-radius: 1rem;
 }
@@ -53,6 +54,12 @@ h1 {
     .container {
         flex-direction: row;
         flex-wrap: nowrap;
+        height: 70vh;
+    }
+
+    .controllers {
+        height: 100%;
+        min-height: 100%;
     }
 
     :root {
@@ -112,116 +119,14 @@ h1 {
     flex-grow: 1;
 }
 
-/*-------------------------------- VIDEO CONTROLLER */
-
-#video-controller {
-    aspect-ratio: 2/1;
-    display: none;
-}
-
-#video-controller label {
-    justify-self: center;
-    font-size: larger;
-    min-height: 100%;
-}
-
-/*-------------------------------- CONNECTION */
-
-.connection-controller {
-    transform: rotate(0deg);
-    margin: var(--margin-controller);
-    border-radius: 1rem;
-}
-
-.connection-buttons {
-    display: flex;
-    flex-direction: row;
-    margin: 1rem 1rem 0 1rem;
-    padding: 0 1rem;
-    border-radius: 1rem;
-}
-
-.connection-buttons > * {
-    flex-grow: 1;
-}
-
-.connection-controller > md-outlined-text-field {
-    width: calc(100% - 2rem);
-    margin: 0rem 1rem 1rem 1rem;
-}
-
-/*-------------------------------- VIEW */
-
-#view {
-    display: grid;
-    grid-template-columns: 1;
-    grid-template-rows: 80% 20%;
-    border-radius: 1rem;
-    transform: rotate(0deg);
-    max-height: 70vh;
-}
-
-#legs-view {
-    min-width: 100%;
-    height: 100%;
-    aspect-ratio: 3 / 3;
-    display: grid;
-    grid-template-columns: 50% 50%;
-    grid-template-rows: 50% 50%;
-}
-
-#video-view {
-    @extend #legs-view;
-    display: none;
-}
-
-.leg-view{
-    padding: 20% 40% 20% 40%;
-}
-
-.leg {
-    transform: rotate(-45deg);
-    transform-origin: 0 0;
-}
-
-.leg * {
-    height: var(--leg-part-length);
-    width: 0.6rem;
-    background-color: #505050;
-    border-radius: 0.2rem;
-}
-
-.tibia {
-    transform: rotate(135deg);
-    transform-origin: 0 0;
-}
-
-@media screen and (min-width: 768px) {
-    #view {
-        width: calc(100% - var(--width-controllers));
-    }
-}
-
-#view-buttons {
-    width: auto;
-    display: flex;
-    flex-direction: row;
-    margin: 1rem 1rem 1rem 1rem;
-    padding: 1rem 1rem;
-    border-radius: 1rem;
-}
-
-#view-buttons > * {
-    flex-grow: 1;
-}
-
 /*-------------------------------- WALK AND TURN CONTROL */
 
 #walk-turn-controller {
     display: flex;
     flex-direction: row;
     aspect-ratio: 1178 / 806;
-    margin: 3rem 3rem;
+    margin: auto 3rem;
+    width: calc(100% - 6rem);
 }
 
 #turn-controller{
@@ -273,4 +178,112 @@ h1 {
     top: -20%;
     width: 50%;
     height: 40%;
+}
+
+/*-------------------------------- VIDEO CONTROLLER */
+
+#video-controller {
+    padding: 2rem;
+    display: none;
+}
+
+#video-controller label {
+    justify-self: center;
+    font-size: larger;
+    min-height: 100%;
+}
+
+/*-------------------------------- VIEW */
+
+#view {
+    display: grid;
+    grid-template-columns: 1;
+    grid-template-rows: 80% 20%;
+    border-radius: 1rem;
+    transform: rotate(0deg);
+    max-height: 70vh;
+    width: 100%;
+}
+
+#legs-view {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 50% 50%;
+}
+
+#video-view {
+    @extend #legs-view;
+    display: none;
+    align-items: center;
+}
+
+#video-view canvas {
+    flex-grow: 1;
+}
+
+.leg-view{
+    padding: 20% 40% 20% 40%;
+}
+
+.leg {
+    transform: rotate(-45deg);
+    transform-origin: 0 0;
+}
+
+.leg * {
+    height: var(--leg-part-length);
+    width: 0.6rem;
+    background-color: #505050;
+    border-radius: 0.2rem;
+}
+
+.tibia {
+    transform: rotate(135deg);
+    transform-origin: 0 0;
+}
+
+@media screen and (min-width: 768px) {
+    #view {
+        width: calc(100% - var(--width-controllers));
+    }
+}
+
+#view-buttons {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    margin: 1rem 1rem 1rem 1rem;
+    padding: 1rem 1rem;
+    border-radius: 1rem;
+}
+
+#view-buttons > * {
+    flex-grow: 1;
+}
+
+/*-------------------------------- CONNECTION */
+
+.connection-controller {
+    transform: rotate(0deg);
+    margin: var(--margin-controller);
+    border-radius: 1rem;
+}
+
+.connection-buttons {
+    display: flex;
+    flex-direction: row;
+    margin: 1rem 1rem 0 1rem;
+    padding: 0 1rem;
+    border-radius: 1rem;
+}
+
+.connection-buttons > * {
+    flex-grow: 1;
+}
+
+.connection-controller > md-outlined-text-field {
+    width: calc(100% - 2rem);
+    margin: 0rem 1rem 1rem 1rem;
 }
