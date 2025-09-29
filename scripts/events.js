@@ -19,6 +19,7 @@ let sliderFemur;
 let sliderTibia;
 let iSlidersPos;
 let iSlidersOrn;
+let feetsTab;
 let angleController;
 let posOrnController;
 let videoController;
@@ -77,8 +78,7 @@ function EvalResponse(words) {
             }
             updateLegs([angles[1], angles[7], angles[4], angles[10]]);
             updateTibias([angles[2], angles[8], angles[5], angles[11]]);
-            tabs = document.getElementById('ctrl_feet_tab');
-            ctrlFeetTab(tabs, true);
+            ctrlFeetTab();
         }
     }
 }
@@ -96,17 +96,17 @@ function poacTab(target) {
     }, 0);
 }
 
-function ctrlFeetTab(target, by_fraction){
+function ctrlFeetTab(){
     // Schedule a handler to run after the modify to the tabs
     setTimeout(() => {
-        let tabActive = target.querySelector('md-secondary-tab[active]');
+        let tabActive = feetsTab.querySelector('md-secondary-tab[active]');
         let feet = parseInt(tabActive.getAttribute('i-feet'));
         sliderCoxa.setAttribute('i', String(feet*3));
         sliderFemur.setAttribute('i', String(feet*3+1));
         sliderTibia.setAttribute('i', String(feet*3+2));
-        updateSlider(sliderCoxa, feet*3, by_fraction);
-        updateSlider(sliderFemur, feet*3+1, by_fraction);
-        updateSlider(sliderTibia, feet*3+2, by_fraction);
+        updateSlider(sliderCoxa, feet*3);
+        updateSlider(sliderFemur, feet*3+1);
+        updateSlider(sliderTibia, feet*3+2);
     }, 0);
 }
 
@@ -126,7 +126,7 @@ function posOrnTab(target){
     }, 0);
 }
 
-function updateSlider(slider, i, by_fraction) {
+function updateSlider(slider, i) {
     if((i + 1) % 3 != 0) limit = parseInt(slider.getAttribute('max'));
     else limit = parseInt(slider.getAttribute('min'));
     if(Math.abs(angles[i]) - Math.abs(limit) > 0) return;
@@ -378,6 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sliderTibia = document.getElementById('slider_tibia');
     iSlidersOrn = document.querySelectorAll('.orn');
     iSlidersPos = document.querySelectorAll('.pos');
+    feetsTab = document.getElementById('feets-tab');
     angleController = document.getElementById('angle-controller');
     posOrnController = document.getElementById('pos-orn-controller');
     videoController = document.getElementById('video-controller');
@@ -399,11 +400,9 @@ document.addEventListener("DOMContentLoaded", () => {
         .addEventListener("click", startPython);
     connect_button.addEventListener("click", connectRover);
     document
-        .getElementById("poac_tab")
+        .getElementById("controllers-tab")
         .addEventListener("change", event => poacTab(event.target));
-    document
-        .getElementById("ctrl_feet_tab")
-        .addEventListener("change", event => ctrlFeetTab(event.target, false));
+    feetsTab.addEventListener("change", () => ctrlFeetTab());
     document
         .getElementById("pos_orn_tab")
         .addEventListener("change", event => posOrnTab(event.target));

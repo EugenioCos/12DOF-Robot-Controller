@@ -216,11 +216,13 @@ h1 {
 #video-view {
     @extend #legs-view;
     display: none;
-    align-items: center;
+    padding: 2rem;
 }
 
 #video-view canvas {
-    flex-grow: 1;
+    aspect-ratio: 11 / 15;
+    width: calc(100% - 4rem);
+    height: auto;
 }
 
 .leg-view{
@@ -247,6 +249,13 @@ h1 {
 @media screen and (min-width: 768px) {
     #view {
         width: calc(100% - var(--width-controllers));
+    }
+}
+
+@media screen and (min-width: 1240px) {
+    #video-view canvas {
+        width: auto;
+        height: calc(100% - 4rem);
     }
 }
 
