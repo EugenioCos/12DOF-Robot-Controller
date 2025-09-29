@@ -7,7 +7,7 @@ const { text } = require("stream/consumers");
 const DEBUG = true;
 
 let port = "81";
-let ip = "192.168.1.29";
+let ip = "192.168.1.68";
 
 const terminalConsole = new nodeConsole.Console(process.stdout, process.stderr);
 let buffer = new Uint8Array(8192);

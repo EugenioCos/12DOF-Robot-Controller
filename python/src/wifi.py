@@ -85,13 +85,13 @@ class Wifi:
             array_from_client.extend(data)
         self.sendImage(array_from_client, imgSize)
 
-    def Comunica(self, angoli, withImg):
+    def Comunica(self, angoli, withImg, resetDisplay):
         if not self.connesso: return
         while(time.time() - self.lastTime < self.intervallo):
             time.sleep(self.intervallo/20)
         self.lastTime = time.time()
 
-        command = self.AngToCmd(angoli, withImg)
+        command = self.AngToCmd(angoli, withImg, resetDisplay)
         self.Invia(command)
         if(withImg): self.RiceviImg()
         risposta = self.RiceviRisposta()
@@ -116,14 +116,18 @@ class Wifi:
             print("[Wifi] Parsing data error, data: "+str(dati))
         return None
     
-    def AngToCmd(self, angles, withImg):
+    def AngToCmd(self, angles, withImg, resetDisplay):
         pulse = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         for i in range(0, 12):
             pulse[i] = angles[i] 
             pulse[i] *= (-1 if (i-2)%3==0 else 1)
             pulse[i] = self.AngToPls(pulse[i])
+            if(i%3==0): pulse[i] = 3000-pulse[i] 
         # Input
-        comando = "<{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}#{8}#{9}#{10}#{11}" + ("P" if withImg else ">")
+        comando = "<{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}#{8}#{9}#{10}#{11}"
+        if resetDisplay: comando += "R"
+        if withImg: comando += "P"
+        else : comando += ">"
         return comando.format(int(pulse[0]), int(pulse[1]), int(pulse[2]),
                                  int(pulse[3]), int(pulse[4]), int(pulse[5]),
                                  int(pulse[6]), int(pulse[7]), int(pulse[8]),

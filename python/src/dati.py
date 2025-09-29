@@ -31,7 +31,7 @@ class RobotController:
         self.Wrot = 0  # 0. rotazione (0. fermo)
         self.V = 0.5  # 0.5 velocità di movimento
         self.Aggiorna()
-        self.accXY = self.wifi.Comunica(self.angles, self.record)
+        self.accXY = self.wifi.Comunica(self.angles, self.record, True)
 
     def Termina(self):
         self.planner.phi = 1.
@@ -73,7 +73,7 @@ class RobotController:
             # wrot = 0 in quanto il cammino non considera la rotazione
             self.bodytoFeet1 = self.planner.loop(self.V, self.angle, 0, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
             self.Aggiorna()
-            self.accXY = self.wifi.Comunica(self.angles, self.record)
+            self.accXY = self.wifi.Comunica(self.angles, self.record, False)
             update_func()
 
 
@@ -85,7 +85,7 @@ class RobotController:
         while self.girando or (self.planner.phi < 0.98 and not (self.planner.phi > 0.49 and self.planner.phi < 0.51)):
             self.bodytoFeet1 = self.planner.loop(0, self.angle, self.Wrot, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
             self.Aggiorna()
-            self.accXY = self.wifi.Comunica(self.angles, self.record)
+            self.accXY = self.wifi.Comunica(self.angles, self.record, False)
             update_func()
 
     # Imposta nuove coordinare (utilizzato da vista Lato)
@@ -104,7 +104,7 @@ class RobotController:
             self.bodytoFeet1[3, 0] = self.bodytoFeet0[3, 0] = -self.kinematics.L / 2 - newXZ[0]
             self.bodytoFeet1[3, 2] = self.bodytoFeet0[3, 2] = -newXZ[1]
         self.Aggiorna()
-        self.accXY = self.wifi.Comunica(self.angles, False)
+        self.accXY = self.wifi.Comunica(self.angles, self.record, False)
 
     # Imposta un angolo (utilizzato da vista leve)
     def SetAngolo(self, n, angolo):
@@ -118,7 +118,7 @@ class RobotController:
             self.bodytoFeet1[2] = self.bodytoFeet0[2] = self.kinematics.calcolaPiede("BR", self.angles[6:9])
         if n in range(9, 12):
             self.bodytoFeet1[3] = self.bodytoFeet0[3] = self.kinematics.calcolaPiede("BL", self.angles[9:12])
-        self.wifi.Comunica(self.angles, False)
+        self.wifi.Comunica(self.angles, self.record, False)
     
     def GetAngoli(self):
         return self.angles
@@ -127,13 +127,13 @@ class RobotController:
         if self.InMovimento(): return
         self.orn[n] = np.deg2rad(orn)
         self.Aggiorna()
-        self.accXY = self.wifi.Comunica(self.angles, False)
+        self.accXY = self.wifi.Comunica(self.angles, self.record, False)
     
     def SetPos(self, n, pos):
         if self.InMovimento(): return
         self.pos[n] = pos  # from cm to m
         self.Aggiorna()
-        self.accXY = self.wifi.Comunica(self.angles, False)
+        self.accXY = self.wifi.Comunica(self.angles, self.record, False)
 
     def GetOrn(self):
         return [np.rad2deg(tmp) for tmp in self.orn]
