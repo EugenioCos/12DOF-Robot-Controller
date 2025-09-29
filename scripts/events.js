@@ -10,8 +10,9 @@ let port = "81";
 let ip = "192.168.1.29";
 
 const terminalConsole = new nodeConsole.Console(process.stdout, process.stderr);
-let buffer = new Uint8Array(42240);
+let buffer = new Uint8Array(8192);
 let bufferIndex = 0;
+let imgSize = 0;
 let angles = [90,90,90,90,90,90,90,90,90,90,90,90];
 let sliderCoxa;
 let sliderFemur;
@@ -200,39 +201,50 @@ function textInput() {
 // ------------------- VIDEO VIEW ----------------------------------------------------------------------------
 
 function showVideoView(show) {
-    videoView.style.display = show ? 'flex' : 'none';
+    if(noChild()) return;
+    videoView.style.display = show ? 'block' : 'none';
     legsView.style.display = show ? 'none' : 'grid';
-    console.log(show);
+    send(show ? "setrecord 1" : "setrecord 0");
 }
 
 function updateVideo(array) {
     data = new Uint8Array(array);
-    if(42240 - bufferIndex > data.length) {
+    // parsing image size
+    if(imgSize == 0) {
+        let i = 0;
+        let tmp = '';
+        while(data[i] != 83){
+            tmp += String.fromCharCode(data[i]);
+            i++;
+        }
+        imgSize = parseInt(tmp);
+        data = data.slice(i+1, data.length);
+    }
+    // filling buffer
+    if(imgSize - bufferIndex > data.length) {
         buffer.set(data, bufferIndex);
         bufferIndex += data.length;
     } else {
-        buffer.set(data.slice(0, 42240 - bufferIndex), bufferIndex);
-        data = data.slice(42240 - bufferIndex, data.length);
-        bufferIndex = 42240;
+        buffer.set(data.slice(0, imgSize - bufferIndex), bufferIndex);
+        data = data.slice(imgSize - bufferIndex, data.length);
+        bufferIndex = imgSize;
     }
-    if(bufferIndex < 42240) return;
-
-    const ctx = canvas.getContext("2d");
-    const imageData = ctx.createImageData(240, 176);
-    for (let i = 0; i < buffer.length; i++) {
-        const val = buffer[i];
-        imageData.data[i * 4 + 0] = val; // R
-        imageData.data[i * 4 + 1] = val; // G
-        imageData.data[i * 4 + 2] = val; // B
-        imageData.data[i * 4 + 3] = 255; // Alpha
-    }
-    ctx.putImageData(imageData, 0, 0);
-    console.log("Image updated");
+    if(imgSize == 0 || bufferIndex < imgSize) return;
+    // drawing image
+    const blob = new Blob([buffer], {type: 'image/jpeg'});
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+    };
+    img.src = url;
 
     if(data.length > 0) {
         buffer.set(data, 0);
         bufferIndex = data.length;
     } else bufferIndex = 0;
+    imgSize = 0;
 }
 
 // ------------------- LEGS VIEW -----------------------------------------------------------------------------
@@ -287,6 +299,7 @@ function stopRover() {
 }
 
 function resetRover() {
+    bufferIndex = 0;
     if(noChild()) return;
     send("reset");
 }

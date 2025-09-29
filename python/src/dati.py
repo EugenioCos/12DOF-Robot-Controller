@@ -13,7 +13,7 @@ class RobotController:
         self.offsetPlanner = np.array([0., 0.5, 0.5, 0.]) #offset di inizio del movimento tra i passi
         self.angles = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.accXY = None # None | [accX, accY]
-        self.record = True
+        self.record = False
         self.Reset()
     
     def Reset(self):
@@ -149,3 +149,6 @@ class RobotController:
 
     def SetSpeed(self, speed):
         self.V = speed
+    
+    def SetRecord(self, record):
+        self.record = record

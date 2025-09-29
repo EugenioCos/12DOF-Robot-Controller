@@ -27,9 +27,9 @@ class Api:
     def __init__(self, dati):
         self.dati = dati
         self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
-                         "getang",     "stop",    "reset",    "sync", "setwrot", "setspeed", "setfeetpos"]
+                         "getang",     "stop",    "reset",    "sync", "setwrot", "setspeed", "setfeetpos", "setrecord"]
         self.handlers = [self.SetAngolo, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Disconnect, self.Connect,
-                         self.GetAng, self.Stop, self.Reset, self.Sync, self.SetWRot, self.SetSpeed, self.SetFeetPos]
+                         self.GetAng, self.Stop, self.Reset, self.Sync, self.SetWRot, self.SetSpeed, self.SetFeetPos, self.SetRecord]
         self.thread = None
 
 
@@ -137,4 +137,7 @@ class Api:
         self.dati.SetFeetPos([float(x), float(z)], feet)
         self.ReportAngles()
 
-    
+    def SetRecord(self, input):
+        value = self.parseInput(1, input)[0]
+        record = bool(value)
+        self.dati.SetRecord(record)

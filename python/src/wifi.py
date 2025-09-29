@@ -15,7 +15,6 @@ class Wifi:
         self.intervallo = intervallo
         self.lastTime = time.time()
         self.sendImage = sendImage
-        self.imgSize = 42240
 
     def Connetti(self, ip, port):
         try:
@@ -52,20 +51,39 @@ class Wifi:
             self.Disconnetti()
         return None
     
+    def RiceviImgSize(self):
+        risposta = ""
+        while 'S' not in risposta:
+            try:
+                tmp = self.s.recv(1).decode("utf-8").rstrip('\n\r')
+                if tmp == 'S': break
+                else: risposta += tmp
+            except ConnectionResetError:
+                self.Disconnetti()
+            except socket.timeout:
+                self.Disconnetti()
+        try:
+            size = int(risposta)
+            return size
+        except:
+            print("[Wifi] Parsing image size error, data: "+str(risposta))
+        return 0
+    
     def RiceviImg(self):
         received = 0
         chunk_size = 4096
         array_from_client = bytearray()
-        while received < self.imgSize:
+        imgSize = self.RiceviImgSize()
+        while received < imgSize:
             try:
-                to_recv = self.imgSize - received if self.imgSize - received < chunk_size else chunk_size
+                to_recv = imgSize - received if imgSize - received < chunk_size else chunk_size
                 data = self.s.recv(to_recv)
             except Exception as e: 
                 print(e)
                 return
             received += len(data)
             array_from_client.extend(data)
-        self.sendImage(array_from_client)
+        self.sendImage(array_from_client, imgSize)
 
     def Comunica(self, angoli, withImg):
         if not self.connesso: return

@@ -6,7 +6,8 @@ import os
 
 image_fd = os.fdopen(3, "wb")
 
-def sendImage(array):
+def sendImage(array, imgSize):
+    image_fd.write(str(imgSize).encode()+b'S')
     image_fd.write(array)
     image_fd.flush()
 
