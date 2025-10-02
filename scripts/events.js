@@ -79,6 +79,8 @@ function EvalResponse(words) {
             updateLegs([angles[1], angles[7], angles[4], angles[10]]);
             updateTibias([angles[2], angles[8], angles[5], angles[11]]);
             ctrlFeetTab();
+        } else if(cmd == "Disconnesso"){
+            connect_button.innerHTML = "Connect";
         }
     }
 }
@@ -141,67 +143,70 @@ function updateSlider(slider, i) {
     input.value = angles[i];
 }
 
-// ------------------- CONNECTION CONTROLLER ------------------------------------------------------------------
+// ------------------- WALK AND TURN CONTROL -----------------------------------------------------------------
 
-function startPython() {
-    if(child && !child.killed) return;
-    print("Initializing main.py");
-    child = spawn("python3", ["-u", "python/main.py"], {
-        stdio: ["pipe", "pipe", "pipe", "pipe"]
-    });
-    print(`PID: ${child.pid}`);
-    child.stdout.on("data", (data) => handleResponse(data));
-    child.stdio[3].on("data", (data) => updateVideo(data));
+function calculateTurnAngle(x, y) {
+    xCenter = turnController.scrollWidth*3.15;
+    yCenter = turnController.scrollHeight/2;
+    angRad = Math.atan2(y - yCenter, x - xCenter);
+    return  Math.round(angRad * (180 / Math.PI));
 }
 
-function connectRover() {
+function updateTurnDirection(x, y) {
     if(noChild()) return;
-    let state = connect_button.innerHTML;
-    if(state == "Connect") send("connect "+ip+" "+port);
-    else {
-        send("disconnect");
-        changeConnectButton();
-    }
+    angle = calculateTurnAngle(x, y) + 180;
+    if(angle > -10 && angle < 10) angle = 0;
+    if(angle > 180) angle -= 360;
+    if(angle > 35) angle = 35;
+    if(angle < -35) angle = -35;
+    updateTurnPointer(angle);
+    send("setwrot "+String(angle));
 }
 
-function updateIpPort() {
-    value = textInput();
-    const regex = new RegExp(/\b\d{3}\.\d{3}\.\d{1,3}\.\d{1,3} \d{1,5}\b/);
-    if(regex.test(value)){
-        words = value.split(' ');
-        ip = words[0];
-        port = words[1];
-    }
+function updateTurnPointer(angle) {
+    turnPointer.style.transform = `rotate(${angle}deg)`;
 }
 
-function changeConnectButton(){
-    let state = connect_button.innerHTML;
-    if(state == "Connect") connect_button.innerHTML = "Disconnect";
-    else connect_button.innerHTML = "Connect";
-}
-
-function sendRover(){
-    text = textInput();
-    send(text);
-}
-
-function stopPython() {
+function updateSpeed(x){
     if(noChild()) return;
-    print("Stopping program");
-    child.kill(3);
+    maxDelta = speedController.scrollHeight * 0.25;
+    center = speedController.scrollHeight / 2;
+    delta = x - center;
+    if(delta > maxDelta) delta = maxDelta;
+    if(delta < -maxDelta) delta = -maxDelta;
+    speedPointer.style.transform = `translateY(${delta}px)`;
+    scale = 0.5 - delta / (maxDelta*2);
+    send("setspeed "+String(scale));
 }
 
+function calculateWalkAngle(x, y) {
+    xCenter = walkController.scrollWidth/2;
+    yCenter = walkController.scrollHeight/2;
+    angRad = Math.atan2(y - yCenter, x - xCenter);
+    return  Math.round(angRad * (180 / Math.PI));
+}
 
-function textInput() {
-    target = document.getElementById('text_input');
-    const internalInput = target.shadowRoot.querySelector('.input');
-    return internalInput.value;
+function updateWalkDirection(x, y) {
+    if(noChild()) return;
+    angle = calculateWalkAngle(x, y);
+    angleFromLeft = angle+180;
+    mod90 = angleFromLeft%90;
+    if(mod90 > 80) // approssimazione per eccesso
+        angleFromLeft += 90 - (mod90);
+    if(mod90 < 10) // approssimazione per difetto
+        angleFromLeft -= mod90;
+    console.log(angleFromLeft);
+    updateWalkDirectionLine(angleFromLeft-90);
+    send("walk "+String(angleFromLeft));
+}
+
+function updateWalkDirectionLine(angle) {
+    walkDirectionLine.style.transform = `rotate(${angle}deg)`;
 }
 
 // ------------------- VIDEO VIEW ----------------------------------------------------------------------------
 
 function showVideoView(show) {
-    if(noChild()) return;
     videoView.style.display = show ? 'block' : 'none';
     legsView.style.display = show ? 'none' : 'grid';
     send(show ? "setrecord 1" : "setrecord 0");
@@ -283,91 +288,74 @@ function updateTibias(angles) {
     });
 }
 
-function walkRover() {
-    if(noChild()) return;
-    send("walk");
-}
+function walkRover() { send("walk"); }
 
-function turnRover() {
-    if(noChild()) return;
-    send("turn");
-}
+function turnRover() { send("turn"); }
 
-function stopRover() {
-    if(noChild()) return;
-    send("stop");
-}
+function stopRover() { send("stop"); }
+
+function syncRover() { send("sync"); }
 
 function resetRover() {
     bufferIndex = 0;
-    if(noChild()) return;
     send("reset");
 }
 
-function syncRover() {
+// ------------------- CONNECTION CONTROLLER ------------------------------------------------------------------
+
+function startPython() {
+    if(child && !child.killed) return;
+    print("Initializing main.py");
+    child = spawn("python3", ["-u", "python/main.py"], {
+        stdio: ["pipe", "pipe", "pipe", "pipe"]
+    });
+    print(`PID: ${child.pid}`);
+    child.stdout.on("data", (data) => handleResponse(data));
+    child.stdio[3].on("data", (data) => updateVideo(data));
+}
+
+function connectRover() {
     if(noChild()) return;
-    send("sync");
+    let state = connect_button.innerHTML;
+    if(state == "Connect") send("connect "+ip+" "+port);
+    else {
+        send("disconnect");
+        changeConnectButton();
+    }
 }
 
-// ------------------- WALK AND TURN CONTROL -----------------------------------------------------------------
-
-function calculateTurnAngle(x, y) {
-    xCenter = turnController.scrollWidth*3.15;
-    yCenter = turnController.scrollHeight/2;
-    angRad = Math.atan2(y - yCenter, x - xCenter);
-    return  Math.round(angRad * (180 / Math.PI));
+function updateIpPort() {
+    value = textInput();
+    const regex = new RegExp(/\b\d{3}\.\d{3}\.\d{1,3}\.\d{1,3} \d{1,5}\b/);
+    if(regex.test(value)){
+        words = value.split(' ');
+        ip = words[0];
+        port = words[1];
+    }
 }
 
-function updateTurnDirection(x, y) {
+function changeConnectButton(){
+    let state = connect_button.innerHTML;
+    if(state == "Connect") connect_button.innerHTML = "Disconnect";
+    else connect_button.innerHTML = "Connect";
+}
+
+function sendRover(){
+    text = textInput();
+    send(text);
+}
+
+function stopPython() {
     if(noChild()) return;
-    angle = calculateTurnAngle(x, y) + 180;
-    if(angle > -10 && angle < 10) angle = 0;
-    if(angle > 180) angle -= 360;
-    if(angle > 35) angle = 35;
-    if(angle < -35) angle = -35;
-    updateTurnPointer(angle);
-    send("setwrot "+String(angle));
+    print("Stopping program");
+    child.kill(3);
 }
 
-function updateTurnPointer(angle) {
-    turnPointer.style.transform = `rotate(${angle}deg)`;
-}
 
-function updateSpeed(x){
-    if(noChild()) return;
-    maxDelta = speedController.scrollHeight * 0.25;
-    center = speedController.scrollHeight / 2;
-    delta = x - center;
-    if(delta > maxDelta) delta = maxDelta;
-    if(delta < -maxDelta) delta = -maxDelta;
-    speedPointer.style.transform = `translateY(${delta}px)`;
-    scale = 0.5 - delta / (maxDelta*2);
-    send("setspeed "+String(scale));
-}
-
-function calculateWalkAngle(x, y) {
-    xCenter = walkController.scrollWidth/2;
-    yCenter = walkController.scrollHeight/2;
-    angRad = Math.atan2(y - yCenter, x - xCenter);
-    return  Math.round(angRad * (180 / Math.PI));
-}
-
-function updateWalkDirection(x, y) {
-    if(noChild()) return;
-    angle = calculateWalkAngle(x, y);
-    angleFromLeft = angle+180;
-    mod90 = angleFromLeft%90;
-    if(mod90 > 80) // approssimazione per eccesso
-        angleFromLeft += 90 - (mod90);
-    if(mod90 < 10) // approssimazione per difetto
-        angleFromLeft -= mod90;
-    console.log(angleFromLeft);
-    updateWalkDirectionLine(angleFromLeft-90);
-    send("walk "+String(angleFromLeft));
-}
-
-function updateWalkDirectionLine(angle) {
-    walkDirectionLine.style.transform = `rotate(${angle}deg)`;
+function textInput() {
+    target = document.getElementById('text_input');
+    const internalInput = target.shadowRoot.querySelector('.input');
+    return internalInput.value;
 }
 
 // ------------------- EVENTS --------------------------------------------------------------------------------

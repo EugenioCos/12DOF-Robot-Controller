@@ -30,7 +30,7 @@ class Wifi:
     
     def Disconnetti(self):
         if not self.connesso: return
-        print("disconnesso")
+        print("Disconnesso")
         self.s.close()
         self.connesso = False
 
