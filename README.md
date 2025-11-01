@@ -47,11 +47,6 @@ I implemented the following features:
 
 All these features work fine and they are well integrated, for example moving by angles does not reset the movement made by using coordinates and vice versa, but some are missing in the new GUI.
 
-Ho inserito questo diagramma perchè il robot, la logica di controllo e la parte di interfaccia utente sono divisi.
-Il robot imposta gli angoli dei motori che riceve tramite TCP.
-La logica di controllo è un processo python che mette a disposizione le operazioni per il calcolo degli angoli da inviare al robot.
-La parte di presentazione è un programma node che fornisce all'utente un'interfaccia grafica con cui chiamare le operazioni.
-
 I added this diagram because the robot, control logic, and user interface are separated:
 - The robot sets the motor angles it receives via TCP. 
 - The control logic is a Python process that provides operations for calculating the angles for the robot. 
