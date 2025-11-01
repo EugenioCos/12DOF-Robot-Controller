@@ -18,18 +18,18 @@ class RobotController:
     
     def Reset(self):
         self.Termina()
-        height = 0.1  # 0.16
-        # distanza tra il centro del corpo e i piedi (0.08/-0.11 , -0.07 , -height)
-        self.bodytoFeetStart = np.matrix([[0.10, -0.09, -height],  # FR posizione
-                                      [0.10, 0.09, -height],   # FL iniziale
-                                      [-0.10, -0.09, -height],   # BR dei passi
-                                      [-0.10, 0.09, -height]], copy=True)  # senza orn e senza pos
-        self.bodytoFeet0 = self.bodytoFeet1 = self.bodytoFeetStart # 0 è il riferimento durante il cammino/rotazione
         self.orn = np.array([0., 0., 0.]) # pitch roll e yatch
         self.pos = np.array([0., 0., 0.]) # spostamenti xyz
         self.angle = 0  # 0. direzione (0. avanti)
         self.Wrot = 0  # 0. rotazione (0. fermo)
         self.V = 0.5  # 0.5 velocità di movimento
+        # distanza tra il centro del corpo e i piedi (0.08/-0.11 , -0.07 , -height)
+        self.bodytoFeet0 = np.matrix([self.kinematics.bodytoFR4,  # FR posizione
+                                      self.kinematics.bodytoFL4,   # FL iniziale
+                                      self.kinematics.bodytoBR4,   # BR dei passi
+                                      self.kinematics.bodytoBL4], copy=True)  # senza orn e senza pos
+        # bodytoFeet0 è il riferimento durante il cammino/rotazione
+        self.bodytoFeet1 = self.planner.loop(self.V, self.angle, 0, self.tPlanner, self.offsetPlanner, self.bodytoFeet0, True)
         self.Aggiorna()
         self.accXY = self.wifi.Comunica(self.angles, self.record, True)
 
@@ -91,18 +91,20 @@ class RobotController:
     # Imposta nuove coordinare (utilizzato da vista Lato)
     def SetFeetPos(self, newXZ, feet):
         if self.InMovimento(): return
+        self.saveOffsetBTF0BTF1()
         if "FR" in feet:
-            self.bodytoFeet1[0, 0] = self.bodytoFeet0[0, 0] = self.kinematics.L / 2 - newXZ[0]
-            self.bodytoFeet1[0, 2] = self.bodytoFeet0[0, 2] = -newXZ[1]
+            self.bodytoFeet1[0, 0] = self.kinematics.L / 2 - newXZ[0]
+            self.bodytoFeet1[0, 2] = -newXZ[1]
         if "FL" in feet:
-            self.bodytoFeet1[1, 0] = self.bodytoFeet0[1, 0] = self.kinematics.L / 2 - newXZ[0]
-            self.bodytoFeet1[1, 2] = self.bodytoFeet0[1, 2] = -newXZ[1]
+            self.bodytoFeet1[1, 0] = self.kinematics.L / 2 - newXZ[0]
+            self.bodytoFeet1[1, 2] = -newXZ[1]
         if "BR" in feet:
-            self.bodytoFeet1[2, 0] = self.bodytoFeet0[2, 0] = -self.kinematics.L / 2 - newXZ[0]
-            self.bodytoFeet1[2, 2] = self.bodytoFeet0[2, 2] = -newXZ[1]
+            self.bodytoFeet1[2, 0] = -self.kinematics.L / 2 - newXZ[0]
+            self.bodytoFeet1[2, 2] = -newXZ[1]
         if "BL" in feet:
-            self.bodytoFeet1[3, 0] = self.bodytoFeet0[3, 0] = -self.kinematics.L / 2 - newXZ[0]
-            self.bodytoFeet1[3, 2] = self.bodytoFeet0[3, 2] = -newXZ[1]
+            self.bodytoFeet1[3, 0] = -self.kinematics.L / 2 - newXZ[0]
+            self.bodytoFeet1[3, 2] = -newXZ[1]
+        self.applyOffsetBTF0BTF1()
         self.Aggiorna()
         self.accXY = self.wifi.Comunica(self.angles, self.record, False)
 
@@ -110,15 +112,23 @@ class RobotController:
     def SetAngolo(self, n, angolo):
         if self.InMovimento(): return
         self.angles[n] = angolo
+        self.saveOffsetBTF0BTF1()
         if n in range(0, 3):
-            self.bodytoFeet1[0] = self.bodytoFeet0[0] = self.kinematics.calcolaPiede("FR", self.angles[0:3])
+            self.bodytoFeet1[0] = self.kinematics.calcolaPiede("FR", self.angles[0:3])
         if n in range(3, 6):
-            self.bodytoFeet1[1] = self.bodytoFeet0[1] = self.kinematics.calcolaPiede("FL", self.angles[3:6])
+            self.bodytoFeet1[1] = self.kinematics.calcolaPiede("FL", self.angles[3:6])
         if n in range(6, 9):
-            self.bodytoFeet1[2] = self.bodytoFeet0[2] = self.kinematics.calcolaPiede("BR", self.angles[6:9])
+            self.bodytoFeet1[2] = self.kinematics.calcolaPiede("BR", self.angles[6:9])
         if n in range(9, 12):
-            self.bodytoFeet1[3] = self.bodytoFeet0[3] = self.kinematics.calcolaPiede("BL", self.angles[9:12])
+            self.bodytoFeet1[3] = self.kinematics.calcolaPiede("BL", self.angles[9:12])
+        self.applyOffsetBTF0BTF1()
         self.wifi.Comunica(self.angles, self.record, False)
+
+    def saveOffsetBTF0BTF1(self):
+        self.offsetBTF0BTF1 = self.bodytoFeet0 - self.bodytoFeet1
+    
+    def applyOffsetBTF0BTF1(self):
+        self.bodytoFeet0 = self.bodytoFeet1 + self.offsetBTF0BTF1
     
     def GetAngoli(self):
         return self.angles

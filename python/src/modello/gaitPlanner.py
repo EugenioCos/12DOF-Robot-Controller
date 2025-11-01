@@ -158,17 +158,21 @@ class trotGait:
     #computes step trajectory for every foot, defining L which is like velocity command, its angle,
     #offset between each foot, period of time of each step and the initial vector from center of robot to feet.
 
-    def loop(self, V, angle, Wrot, T, offset, bodytoFeet_):
+    def loop(self, V, angle, Wrot, T, offset, bodytoFeet_, fermo=False):
 
         if T <= 0.01:
             T = 0.01
 
+        
         if (self.phi >= 0.99):
-            self.lastTime = time.time()
             #print("[Gait Planner] Nuovo passo")
-        if ((time.time() - self.lastTime) / T > self.phi + 0.4): # Se è stato fermo ripristina lastTime
-            self.lastTime = time.time() - (self.phi * T)
-        self.phi = (time.time() - self.lastTime) / T
+            self.lastTime = time.time()
+            self.phi = 0.
+
+        if not fermo and self.lastTime != time.time():
+            if ((time.time() - self.lastTime) / T > self.phi + 0.4): # Se è stato fermo ripristina lastTime
+                self.lastTime = time.time() - (self.phi * T)
+            self.phi = (time.time() - self.lastTime) / T
         #now it calculates step trajectory for every foot
         step_coord = self.stepTrajectory(
             self.phi + offset[0], V, angle, Wrot, np.squeeze(np.asarray(bodytoFeet_[0, :])))  # FR
