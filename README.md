@@ -62,3 +62,18 @@ I added this diagram because the robot, control logic, and user interface are se
 This diagram shows the python code structure:
 
 ![](docs/diagrams/python_lld.drawio.png)
+
+## setup
+
+from the root folder follow this steps:
+
+- start the setup script (for more info look inside the file)
+
+    > chmod +x setup.bash
+
+    > ./setup.sh
+
+- check if everything works
+
+    > npm start
+    

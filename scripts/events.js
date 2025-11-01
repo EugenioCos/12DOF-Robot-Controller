@@ -304,7 +304,7 @@ function resetRover() {
 function startPython() {
     if(child && !child.killed) return;
     print("Initializing main.py");
-    child = spawn("python3", ["-u", "python/main.py"], {
+    child = spawn("bash", ["./python/starter.bash"], {
         stdio: ["pipe", "pipe", "pipe", "pipe"]
     });
     print(`PID: ${child.pid}`);
