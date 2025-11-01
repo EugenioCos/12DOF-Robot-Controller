@@ -60,6 +60,8 @@ This diagram shows the python code structure:
 
 ## setup
 
+**Requirements:** node and python
+
 from the root folder follow this steps:
 
 - start the setup script (for more info look inside the file)
