@@ -71,7 +71,7 @@ from the root folder follow this steps:
 
     > chmod +x setup.bash
 
-    > ./setup.sh
+    > ./setup.bash
 
 - check if everything works
 
