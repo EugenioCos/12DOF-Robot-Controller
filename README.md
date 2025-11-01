@@ -1,6 +1,6 @@
 # Welcome
 
-This repository contains a simple program to control a 12 dof robot dog
+This repository contains a program to control a 12 dof robot dog
 
 
 ## The robot
@@ -13,16 +13,15 @@ Due to limited budget I decided to replace the raspberry pi with a cheaper AVR m
 
 The ESP32 is on the front on the robot and communicate via UART protocol with the AVR chip inside on another board connected with all 12 motor.
 
-On the ESP32 board I mounted a display that shows commands frequency, commands data and connection state. 
-There is also the support for a camera that I planned to add and in another project I have coded the necessary to capture a photo and send it via tcp stream at a decent rate on the same board of the robot.
+On the ESP32 board I mounted a display that shows commands frequency, commands data and connection state.
 
-A thing to be added is the gyro sensor, in the past I have mounted it on the robot but during the years I don't know why it has been removed preserving the board pins header and some code.
+A thing to be added is the gyro sensor, in the past I have mounted it on the robot but during the years I don't remeber why I removed it preserving the board pins header and some code.
 
 ![](docs/robot_display.png)
 
 ## The program
 
-For the following task I used code from the robot project linked before:
+For the following tasks I used code from the robot project linked before:
 
 - calculate all 12 joints values from coordinates body-to-feet of each feet
 - update feets position to make robot moves by specific speed, direction, self-rotation, step-time and step-plan.
@@ -41,13 +40,19 @@ I implemented the following features:
 - control of a single feet by grabbing it in the view
 - set robot's roll, yaw and pitch
 - set robot's position from feets
-- set walking direction and walk
-- set turning direction and speed and turn
-- manual send messages to the robot
+- set walking direction 
+- walk
+- set turning direction and speed
+- turn
+- live video stream
 
-All these features work fine and they are well integrated, for example moving by angles does not reset the movement made by using coordinates and vice versa, but some are missing in the new GUI.
+All these features works fine and they are well integrated, for example moving by angles does not reset the movement made by using coordinates and vice versa.
 
-I added this diagram because the robot, control logic, and user interface are separated:
+Control logic, and user interface are separated:
+- a python program calculates everything
+- a web interface allow the user to send commands, view robot movements and camera stream
+
+I added the below diagrams in the attempt to explain better the struture.
 - The robot sets the motor angles it receives via TCP. 
 - The control logic is a Python process that provides operations for calculating the angles for the robot. 
 - The presentation part is a Node.js program that provides a graphical interface to invoke control operations.
