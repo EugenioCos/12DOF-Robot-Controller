@@ -4,7 +4,11 @@ from src.wifi import Wifi
 from src.api import Api
 import os
 
-image_fd = os.fdopen(3, "wb")
+try:
+    image_fd = os.fdopen(3, "wb")
+except:
+    print("UI connection failed")
+    exit()
 
 def sendImage(array, imgSize):
     image_fd.write(str(imgSize).encode()+b'S')

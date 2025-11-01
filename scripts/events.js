@@ -1,7 +1,5 @@
-const { exec, spawn } = require("child_process");
+const { spawn } = require("child_process");
 const nodeConsole = require("console");
-const { connect } = require("net");
-const { type } = require("os");
 const { text } = require("stream/consumers");
 
 const DEBUG = true;
