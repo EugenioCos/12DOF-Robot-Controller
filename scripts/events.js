@@ -53,14 +53,15 @@ function noChild() {
 function send(text) {
     if(noChild()) return;
     print(`Sending ${text}`);
-    child.stdin.write(text+"\n\r");
+    child.stdio[3].write(text+"\n\r");
 }
 
 // ------------------- MESSAGES ELABORATION ------------------------------------------------------------------
 
 function handleResponse(data) {
-    print(`[JS] received data: ${data}`);
-    words = data.toString().replace(/[\n\r\t]/gm, "").split(' ').reverse();
+    //print(`[JS] received data<${data}>end`);
+    words = data.toString().trimEnd().replace("\n\r", "").split(' ').reverse();
+    //terminalConsole.log(`[JS] words: `, words);
     EvalResponse(words);
 }
 
@@ -79,6 +80,8 @@ function EvalResponse(words) {
             ctrlFeetTab();
         } else if(cmd == "Disconnesso"){
             connect_button.innerHTML = "Connect";
+        } else if(cmd.length() > 0){
+            print("from python fd 4: "+cmd);
         }
     }
 }
@@ -305,11 +308,14 @@ function startPython() {
     if(child && !child.killed) return;
     print("Initializing main.py");
     child = spawn("./python/py_venv/bin/python3", ["-u", "python/main.py"], {
-        stdio: ["pipe", "pipe", "pipe", "pipe"]
+        stdio: ["pipe", "pipe", "pipe", "pipe", "pipe", "pipe"]
     });
     print(`PID: ${child.pid}`);
-    child.stdout.on("data", (data) => handleResponse(data));
-    child.stdio[3].on("data", (data) => updateVideo(data));
+    print(`ExitCode: ${child.exitCode}`);
+    child.stdout.on("data", (data) => print("[python stdout] "+data));
+    child.stderr.on("data", (data) => print("[python stderr] "+data));
+    child.stdio[4].on("data", (data) => handleResponse(data));
+    child.stdio[5].on("data", (data) => updateVideo(data));
 }
 
 function connectRover() {

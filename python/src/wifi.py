@@ -10,11 +10,10 @@ import numpy as np
 # - invio degli angoli e ricezione dei dati del giroscopio
 
 class Wifi:
-    def __init__(self, intervallo, sendImage):
+    def __init__(self, intervallo):
         self.connesso = False
         self.intervallo = intervallo
         self.lastTime = time.time()
-        self.sendImage = sendImage
 
     def Connetti(self, ip, port):
         try:
@@ -24,15 +23,15 @@ class Wifi:
         except socket.error as exc:
             print("Server non creato: ", exc)
             self.connesso = False
-            return
+            return False
         self.connesso = True
-        print("Connesso")
+        return True
     
     def Disconnetti(self):
-        if not self.connesso: return
-        print("Disconnesso")
+        if not self.connesso: return False
         self.s.close()
         self.connesso = False
+        return True
 
     def Invia(self, out):
         #print("Sending... "+out)
@@ -69,7 +68,7 @@ class Wifi:
             print("[Wifi] Parsing image size error, data: "+str(risposta))
         return 0
     
-    def RiceviImg(self):
+    def RiceviImg(self, sendImage):
         received = 0
         chunk_size = 4096
         array_from_client = bytearray()
@@ -83,7 +82,7 @@ class Wifi:
                 return
             received += len(data)
             array_from_client.extend(data)
-        self.sendImage(array_from_client, imgSize)
+        sendImage(array_from_client, imgSize)
 
     def Comunica(self, angoli, withImg, resetDisplay):
         if not self.connesso: return

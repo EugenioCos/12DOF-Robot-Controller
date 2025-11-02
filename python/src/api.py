@@ -1,4 +1,4 @@
-import threading
+import os, threading
 
 class Api:
     """
@@ -23,8 +23,22 @@ class Api:
         words = input.split()
         words.pop(0)
         return (words if len(words) == n else None)
+
+    def sendImage(self, array, imgSize):
+        self.image_fd.write(str(imgSize).encode()+b'S')
+        self.image_fd.write(array)
+        self.image_fd.flush()
     
     def __init__(self, dati):
+        try:
+            self.UIRead = os.fdopen(3, "r").readline
+            self.UIWrite = os.fdopen(4, "w", 1).write
+            self.image_fd = os.fdopen(4, "wb")
+        except:
+            self.UIRead = input
+            self.UIWrite = print
+            print("UI connection failed")
+            #exit()
         self.dati = dati
         self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
                          "getang",     "stop",    "reset",    "sync", "setwrot", "setspeed", "setfeetpos", "setrecord"]
@@ -35,19 +49,18 @@ class Api:
 
     def polling(self):
         while(True):
-            tmp = input()
-            self.checkCommand(tmp)
+            tmp = self.UIRead()
+            self.checkCommand(tmp.rstrip("\n\r"))
     
     def checkCommand(self, tmp):
         for i, cmd in enumerate(self.cmds):
             if cmd in tmp:
                 try:
                     self.handlers[i](tmp)
-                    print(" End", flush=True)
                 except Exception as e:
                     print("Error in ", cmd, e)
                 return
-        print("[Python] invalid command: "+tmp)
+        print("invalid command: "+tmp)
 
     # input expected: 'setang [n] [angle]'
     def SetAngolo(self, input):
@@ -90,22 +103,24 @@ class Api:
             return
         ip = words[1]
         port = int(words[2])
-        self.dati.wifi.Connetti(ip, port)
+        if self.dati.wifi.Connetti(ip, port):
+            self.UIWrite("Connesso\n\r")
 
     def Disconnect(self, input):
-        self.dati.wifi.Disconnetti()
+        if self.dati.wifi.Disconnetti():
+            self.UIWrite("Disconnesso\n\r")
 
     def GetAng(self, input):
         pass
 
     def ReportAngles(self):
         angles = self.dati.GetAngoli()
-        string = "{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} "
+        string = "{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}"
         string = string.format(int(angles[0]), int(angles[1]), int(angles[2]), 
                                int(angles[3]), int(angles[4]), int(angles[5]),
                                int(angles[6]), int(angles[7]), int(angles[8]),
                                int(angles[9]), int(angles[10]), int(angles[11]))
-        print("Angoli: "+string, flush=True)
+        self.UIWrite("Angoli: "+string+"\n\r")
 
     def Stop(self, input):
         self.dati.Ferma()
