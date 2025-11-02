@@ -21,8 +21,8 @@ echo "runnning 'source python/py_venv/bin/activate'"
 source python/py_venv/bin/activate
 
 # install numpy inside the virtual environment
-echo "runnning 'python3 -m pip install numpy'"
-python3 -m pip install numpy
+echo "runnning 'python3 -m pip install -r python/requirements.txt'"
+python3 -m pip install -r python/requirements.txt
 
 # deactivate the virtual environment
 echo "running 'deactivate'"

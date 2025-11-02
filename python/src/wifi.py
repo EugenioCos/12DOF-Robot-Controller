@@ -21,7 +21,7 @@ class Wifi:
             self.s.settimeout(3)
             self.s.connect((ip, port))
         except socket.error as exc:
-            print("Server non creato: ", exc)
+            print("Server non creato: ", str(exc))
             self.connesso = False
             return False
         self.connesso = True
