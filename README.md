@@ -2,6 +2,7 @@
 
 This repository contains a program to control a 12 dof robot dog
 
+![welcome image](docs/welcome_image.jpg)
 
 ## The robot
 
@@ -62,6 +63,9 @@ I added the below diagrams in the attempt to explain better the struture.
 This diagram shows the python code structure:
 
 ![](docs/diagrams/python_lld.drawio.png)
+
+P.S. I have added unit tests for python wifi class to test capabilities of AI. I haven't considered testing during my development because I discovered their powerfull and need too late. Maybe in future I can add a useful test suite for all project.
+P.S. Feel free to contact me for every kind of information or technical request
 
 ## setup
 
