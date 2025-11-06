@@ -54,13 +54,15 @@ class Wifi:
         risposta = ""
         while 'S' not in risposta:
             try:
-                tmp = self.s.recv(1).decode("utf-8").rstrip('\n\r')
+                tmp = self.s.recv(1).decode("utf-8")
                 if tmp == 'S': break
                 else: risposta += tmp
             except ConnectionResetError:
                 self.Disconnetti()
+                break
             except socket.timeout:
                 self.Disconnetti()
+                break
         try:
             size = int(risposta)
             return size
