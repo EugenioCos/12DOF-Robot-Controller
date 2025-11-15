@@ -83,3 +83,7 @@ from the root folder follow this steps:
 
     > npm start
     
+
+## LICENSE and THIRD PARTS NOTICE
+
+see NOTICE file
