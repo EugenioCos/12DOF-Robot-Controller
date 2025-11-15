@@ -17,6 +17,17 @@ def wifi_connected(mocker):
     wifi.connesso = True
     return wifi
 
+@pytest.fixture
+def wifi_for_comunica(mocker):
+    wifi = Wifi(intervallo=1.0)
+    wifi.mock_AngToCmd = mocker.patch('src.wifi.Wifi.AngToCmd', return_value = "cmd1")
+    wifi.mock_Invia = mocker.patch('src.wifi.Wifi.Invia', return_value = None)
+    wifi.mock_RiceviImg = mocker.patch('src.wifi.Wifi.RiceviImg', return_value = "img_data")
+    wifi.mock_RiceviRisposta = mocker.patch('src.wifi.Wifi.RiceviRisposta', return_value = "response")
+    wifi.mock_checkGyro = mocker.patch('src.wifi.Wifi.checkGyro', return_value = {"gyro": 123})
+    return wifi
+
+
 def test_connetti_success(wifi, mocker):
     """#controllato"""
     mock_conn = mocker.patch('socket.socket').return_value
@@ -37,6 +48,11 @@ def test_disconnetti(wifi_connected):
     assert wifi_connected.Disconnetti()
     wifi_connected.s.close.assert_called_once()
     assert not wifi_connected.connesso
+
+def test_disconnetti_disconnesso(wifi_connected):
+    """#controllato"""
+    wifi_connected.connesso = False
+    assert wifi_connected.Disconnetti() == False
 
 def test_invia_success(wifi_connected):
     """# controllato"""
@@ -118,3 +134,55 @@ def test_ang_to_cmd(wifi):
     assert comando == "<1500#1500#-500#1500#1500#-500#1500#1500#-500#1500#1500#-500RP"
     comando = wifi.AngToCmd(angles, withImg=False, resetDisplay=True)
     assert comando == "<1500#1500#-500#1500#1500#-500#1500#1500#-500#1500#1500#-500R>"
+
+def test_comunica_not_connected(wifi_for_comunica):
+    wifi_for_comunica.connesso = False
+    result = wifi_for_comunica.Comunica(angoli=[0, 0, 0], withImg=False, resetDisplay=True)
+    wifi_for_comunica.mock_AngToCmd.assert_not_called()
+    wifi_for_comunica.mock_Invia.assert_not_called()
+    wifi_for_comunica.mock_RiceviImg.assert_not_called()
+    wifi_for_comunica.mock_RiceviRisposta.assert_not_called()
+    wifi_for_comunica.mock_checkGyro.assert_not_called()
+    assert result is None
+
+def test_comunica_connected_no_img(wifi_for_comunica):
+    wifi_for_comunica.connesso = True
+    result = wifi_for_comunica.Comunica(angoli=[0, 0, 0], withImg=False, resetDisplay=True)
+    wifi_for_comunica.AngToCmd.assert_called_once_with([0, 0, 0], False, True)
+    wifi_for_comunica.Invia.assert_called_once_with("cmd1")
+    wifi_for_comunica.RiceviImg.assert_not_called()
+    wifi_for_comunica.RiceviRisposta.assert_called_once()
+    wifi_for_comunica.checkGyro.assert_called_once_with("response")
+    assert result == {"gyro": 123}
+
+def test_comunica_connected_with_img(wifi_for_comunica):
+    wifi_for_comunica.connesso = True
+    result = wifi_for_comunica.Comunica(angoli=[0, 0, 0], withImg=True, resetDisplay=True)
+    wifi_for_comunica.AngToCmd.assert_called_once_with([0, 0, 0], True, True)
+    wifi_for_comunica.Invia.assert_called_once_with("cmd1")
+    wifi_for_comunica.RiceviImg.assert_called_once()
+    wifi_for_comunica.RiceviRisposta.assert_called_once()
+    wifi_for_comunica.checkGyro.assert_called_once_with("response")
+    assert result == {"gyro": 123}
+
+def test_ricevi_img_success(wifi_connected, mocker):
+    wifi_connected.s.recv.side_effect = [b'fakeIm', b'ageDataa']  # Simulate receiving image data
+    mock_RiceviImgSize = mocker.patch('src.wifi.Wifi.RiceviImgSize', return_value = 14)
+    mock_sendImage = mocker.patch('src.api.Api.sendImage')
+
+    # Instantiate the class
+    wifi_connected.RiceviImg(mock_sendImage)
+    mock_RiceviImgSize.assert_called_once()
+    wifi_connected.s.recv.assert_any_call(14)
+    wifi_connected.s.recv.assert_any_call(8)
+    mock_sendImage.assert_called_once_with(b'fakeImageDataa', 14)
+
+def test_ricevi_img_exception(wifi_connected, mocker):
+    wifi_connected.s.recv.side_effect = Exception("Connection error")
+    mock_RiceviImgSize = mocker.patch('src.wifi.Wifi.RiceviImgSize', return_value = 14)
+    mock_sendImage = mocker.patch('src.api.Api.sendImage')
+
+    # Instantiate the class
+    assert wifi_connected.RiceviImg(sendImage=mock_sendImage) == None
+    mock_sendImage.assert_not_called()
+    assert wifi_connected.s.recv.called

@@ -28,7 +28,8 @@ class Wifi:
         return True
     
     def Disconnetti(self):
-        if not self.connesso: return False
+        if not self.connesso: 
+            return False
         self.s.close()
         self.connesso = False
         return True
