@@ -20,11 +20,23 @@ class Api:
     """
 
     def parseInput(self, n, input):
+        if input is None:
+            raise Exception("[parseInput] error parsing the input")
         words = input.split()
         words.pop(0)
-        return (words if len(words) == n else None)
+        if len(words) == n: return words 
+        else: raise Exception("[parseInput] error parsing the input")
 
-    def sendImage(self, array, imgSize):
+    def sendImage(self, array):
+        if self.image_fd is None:
+            return
+        if not isinstance(array, bytearray):
+            print("[api.sendImage] array deve essere di tipo bytearray")
+            return
+        if len(array) == 0:
+            print("[api.sendImage] array non deve essere vuoto")
+            return
+        imgSize = len(array)
         self.image_fd.write(str(imgSize).encode()+b'S')
         self.image_fd.write(array)
         self.image_fd.flush()
@@ -37,13 +49,13 @@ class Api:
         except:
             self.UIRead = input
             self.UIWrite = print
+            self.image_fd = None
             print("UI connection failed")
-            #exit()
         self.dati = dati
         self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
                          "getang",     "stop",    "reset",    "sync", "setwrot", "setspeed", "setfeetpos", "setrecord"]
         self.handlers = [self.SetAngolo, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Disconnect, self.Connect,
-                         self.GetAng, self.Stop, self.Reset, self.Sync, self.SetWRot, self.SetSpeed, self.SetFeetPos, self.SetRecord]
+                         self.GetAng, self.Stop, self.Reset, self.ReportAngles, self.SetWRot, self.SetSpeed, self.SetFeetPos, self.SetRecord]
         self.thread = None
 
 
@@ -58,52 +70,53 @@ class Api:
                 try:
                     self.handlers[i](tmp)
                 except Exception as e:
-                    print("Error in ", cmd, e)
+                    print("Error in", cmd, e)
                 return
         print("invalid command: "+tmp)
 
     # input expected: 'setang [n] [angle]'
     def SetAngolo(self, input):
-        n, angle = self.parseInput(2, input)
+        try: n, angle = self.parseInput(2, input)
+        except: return
         self.dati.SetAngolo(int(n), int(angle))
+        self.ReportAngles()
 
     # input expected: 'setpos [n] [value]'
     def SetPos(self, input):
-        n, value = self.parseInput(2, input)
+        try: n, value = self.parseInput(2, input)
+        except: return
         self.dati.SetPos(int(n), float(value))
         self.ReportAngles()
 
     # input expected: 'setorn [n] [value]'
     def SetOrn(self, input):
-        n, value = self.parseInput(2, input)
+        try: n, value = self.parseInput(2, input)
+        except: return
         self.dati.SetOrn(int(n), int(value))
         self.ReportAngles()
 
     def Walk(self, input):
-        angle = self.parseInput(1, input)
-        if angle == None: # walk
-            if self.thread is not None: self.thread.join()
-            self.thread = threading.Thread(target=self.dati.Cammina, args=(self.Sync,))
-            self.thread.start()
-        else: # set direction
+        try:
+            angle = self.parseInput(1, input)
             if not angle[0].isdigit(): return
             self.dati.SetAngle(int(angle[0]))
             self.ReportAngles()
+        except:
+            if self.thread is not None: self.thread.join()
+            self.thread = threading.Thread(target=self.dati.Cammina, args=(self.ReportAngles,))
+            self.thread.start()
+            
 
     def Turn(self, input):
         if self.thread is not None: self.thread.join()
-        self.thread = threading.Thread(target=self.dati.Gira, args=(self.Sync,))
+        self.thread = threading.Thread(target=self.dati.Gira, args=(self.ReportAngles,))
         self.thread.start()
 
     # input expected: 'connect [ip] [port]'
     def Connect(self, input):
-        words = input.split()
-        if len(words) != 3:
-            print("Invalid input")
-            return
-        ip = words[1]
-        port = int(words[2])
-        if self.dati.wifi.Connetti(ip, port):
+        try: ip, port = self.parseInput(2, input)
+        except: return
+        if self.dati.wifi.Connetti(ip, int(port)):
             self.UIWrite("Connesso\n\r")
 
     def Disconnect(self, input):
@@ -113,7 +126,7 @@ class Api:
     def GetAng(self, input):
         pass
 
-    def ReportAngles(self):
+    def ReportAngles(self, input=""):
         angles = self.dati.GetAngoli()
         string = "{0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}"
         string = string.format(int(angles[0]), int(angles[1]), int(angles[2]), 
@@ -124,17 +137,15 @@ class Api:
 
     def Stop(self, input):
         self.dati.Ferma()
-        self.Sync()
+        self.ReportAngles()
 
     def Reset(self, input):
         self.dati.Reset()
-        self.Sync()
-
-    def Sync(self, input=""):
         self.ReportAngles()
 
     def SetWRot(self, input):
-        value = self.parseInput(1, input)[0]
+        try: value = self.parseInput(1, input)[0]
+        except: return
         max_angle = 35
         max_wrot = 1.
         scaled = int(value) * max_wrot/max_angle
@@ -148,11 +159,13 @@ class Api:
         self.dati.SetSpeed(float(speed))
 
     def SetFeetPos(self, input):
-        x, z, feet = self.parseInput(3, input)
+        try: x, z, feet = self.parseInput(3, input)
+        except: return
         self.dati.SetFeetPos([float(x), float(z)], feet)
         self.ReportAngles()
 
     def SetRecord(self, input):
-        value = self.parseInput(1, input)[0]
+        try: value = self.parseInput(1, input)[0]
+        except: return
         record = bool(value)
         self.dati.SetRecord(record)
