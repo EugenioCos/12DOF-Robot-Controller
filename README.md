@@ -84,6 +84,11 @@ from the root folder follow this steps:
     > npm start
     
 
-## LICENSE and THIRD PARTS NOTICE
+## License and Third-Party Notices
 
-see NOTICE file
+Please refer to the following files for complete legal information:
+
+* **LICENSE:** Contains the full text of the **GNU General Public License v3.0**.
+* **NOTICE:** Contains the attribution, copyright notices, and full text for all **third-party components** used in the software.
+
+**⚠️ Please contact me immediately if you find any error or omission to be fixed or improvement to be done.**
