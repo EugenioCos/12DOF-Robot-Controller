@@ -345,14 +345,14 @@ function changeConnectButton(){
 }
 
 function sendRover(){
-    text = textInput();
-    send(text);
+    let text = textInput();
+    send("send "+text);
 }
 
 function stopPython() {
     if(noChild()) return;
     print("Stopping program");
-    child.kill(3);
+    child.kill(1);
 }
 
 

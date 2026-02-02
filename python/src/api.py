@@ -27,6 +27,13 @@ class Api:
         if len(words) == n: return words 
         else: raise Exception("[parseInput] error parsing the input")
 
+    def Send(self, input):
+        try: text = self.parseInput(1, input)[0]
+        except: return
+        print("sending "+text)
+        self.dati.wifi.Invia(text)
+        self.ReportAngles()
+
     def sendImage(self, array):
         if self.image_fd is None:
             return
@@ -45,17 +52,19 @@ class Api:
         try:
             self.UIRead = os.fdopen(3, "r").readline
             self.UIWrite = os.fdopen(4, "w", 1).write
-            self.image_fd = os.fdopen(4, "wb")
+            self.image_fd = os.fdopen(5, "wb")
         except:
             self.UIRead = input
             self.UIWrite = print
             self.image_fd = None
             print("UI connection failed")
         self.dati = dati
-        self.cmds =     ["setang",    "setpos",    "setorn",    "walk",    "turn",    "disconnect",    "connect",    
-                         "getang",     "stop",    "reset",    "sync", "setwrot", "setspeed", "setfeetpos", "setrecord"]
-        self.handlers = [self.SetAngolo, self.SetPos, self.SetOrn, self.Walk, self.Turn, self.Disconnect, self.Connect,
-                         self.GetAng, self.Stop, self.Reset, self.ReportAngles, self.SetWRot, self.SetSpeed, self.SetFeetPos, self.SetRecord]
+        self.cmds =     ["setang",       "setpos",      "setorn",        "walk",         "turn",            "disconnect",
+                         "connect",      "getang",      "stop",          "reset",        "sync",            "send",
+                         "setwrot",      "setspeed",    "setfeetpos",    "setrecord"]
+        self.handlers = [self.SetAngolo,  self.SetPos,   self.SetOrn,     self.Walk,      self.Turn,         self.Disconnect,
+                         self.Connect,    self.GetAng,   self.Stop,       self.Reset,     self.ReportAngles, self.Send,
+                         self.SetWRot,    self.SetSpeed, self.SetFeetPos, self.SetRecord]
         self.thread = None
 
 
@@ -97,19 +106,19 @@ class Api:
 
     def Walk(self, input):
         try:
-            angle = self.parseInput(1, input)
-            if not angle[0].isdigit(): return
-            self.dati.SetAngle(int(angle[0]))
+            angle = self.parseInput(1, input)[0]
+            if not angle.isdigit(): return
+            self.dati.SetAngle(int(angle))
             self.ReportAngles()
         except:
             if self.thread is not None: self.thread.join()
-            self.thread = threading.Thread(target=self.dati.Cammina, args=(self.ReportAngles,))
+            self.thread = threading.Thread(target=self.dati.Cammina, args=(self.ReportAngles, self.sendImage))
             self.thread.start()
             
 
     def Turn(self, input):
         if self.thread is not None: self.thread.join()
-        self.thread = threading.Thread(target=self.dati.Gira, args=(self.ReportAngles,))
+        self.thread = threading.Thread(target=self.dati.Gira, args=(self.ReportAngles, self.sendImage))
         self.thread.start()
 
     # input expected: 'connect [ip] [port]'

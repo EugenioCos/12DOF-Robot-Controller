@@ -85,9 +85,9 @@ class Wifi:
                 return
             received += len(data)
             array_from_client.extend(data)
-        sendImage(array_from_client, imgSize)
+        sendImage(array_from_client)
 
-    def Comunica(self, angoli, withImg, resetDisplay):
+    def Comunica(self, angoli, withImg, resetDisplay, sendImage=None):
         if not self.connesso: return
         while(time.time() - self.lastTime < self.intervallo):
             time.sleep(self.intervallo/20)
@@ -95,7 +95,7 @@ class Wifi:
 
         command = self.AngToCmd(angoli, withImg, resetDisplay)
         self.Invia(command)
-        if(withImg): self.RiceviImg()
+        if(withImg): self.RiceviImg(sendImage)
         risposta = self.RiceviRisposta()
         gyroData = self.checkGyro(risposta)
         return gyroData

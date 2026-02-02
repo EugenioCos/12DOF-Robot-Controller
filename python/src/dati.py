@@ -9,12 +9,18 @@ class RobotController:
         self.wifi = wifi
         self.kinematics = robotKinematics()
         self.planner = trotGait()
-        self.tPlanner = 1.5  # period of time (in seconds) of every step
-        self.offsetPlanner = np.array([0., 0.5, 0.5, 0.]) #offset di inizio del movimento tra i passi
+        self.tPlanner = 1.  # period of time (in seconds) of every step
+        self.offsetPlanner = np.array([0.5, 0., 0., 0.5]) #offset di inizio del movimento tra i passi
         self.angles = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.accXY = None # None | [accX, accY]
         self.record = False
         self.Reset()
+    
+    def CanStop(self):
+        phiSafe = 0.502 # 0.502 <= phiSafe <= 1
+        i = [phiSafe-0.502, phiSafe-0.5, phiSafe-0.002, phiSafe]
+        p = self.planner.phi
+        return ( p >= i[0] and p <= i[1] ) or ( p >= i[0] and p <= i[1] )
     
     def Reset(self):
         self.Termina()
@@ -24,12 +30,16 @@ class RobotController:
         self.Wrot = 0  # 0. rotazione (0. fermo)
         self.V = 0.5  # 0.5 velocità di movimento
         # distanza tra il centro del corpo e i piedi (0.08/-0.11 , -0.07 , -height)
-        self.bodytoFeet0 = np.matrix([self.kinematics.bodytoFR4,  # FR posizione
-                                      self.kinematics.bodytoFL4,   # FL iniziale
-                                      self.kinematics.bodytoBR4,   # BR dei passi
-                                      self.kinematics.bodytoBL4], copy=True)  # senza orn e senza pos
+        Ydist = 0.15
+        Xdist = 0.193
+        self.bodytoFeet0 = np.matrix([[Xdist/2, -Ydist/2, -self.kinematics.height],  # FR posizione
+                                      [Xdist/2, Ydist/2, -self.kinematics.height],   # FL iniziale
+                                      [-Xdist/2, -Ydist/2, -self.kinematics.height],   # BR dei passi
+                                      [-Xdist/2, Ydist/2, -self.kinematics.height]], copy=True)  # senza orn e senza pos
         # bodytoFeet0 è il riferimento durante il cammino/rotazione
-        self.bodytoFeet1 = self.planner.loop(self.V, self.angle, 0, self.tPlanner, self.offsetPlanner, self.bodytoFeet0, True)
+        self.planner.phi = 0.
+        self.bodytoFeet1 = self.bodytoFeet0
+        #self.bodytoFeet1 = self.planner.loop(self.V, self.angle, 0, self.tPlanner, self.offsetPlanner, self.bodytoFeet0, True)
         self.Aggiorna()
         self.accXY = self.wifi.Comunica(self.angles, self.record, True)
 
@@ -59,11 +69,11 @@ class RobotController:
             self.angles[i + 9] = int(np.rad2deg(radsBL[i]))
 
     # fa camminare il robot
-    def Cammina(self, update_func):
+    def Cammina(self, update_func, sendImage):
         if self.InMovimento(): return
         self.camminando = True
         #print("Cammina")
-        while self.camminando or (self.planner.phi < 0.99 and not (self.planner.phi > 0.499 and self.planner.phi < 0.51)):
+        while self.camminando or not self.CanStop():
             
             # Xacc e Yacc è l'accelerazione ricavata dall'mpu e compliant è un valore true o false (in accXY)
             # se compliantMode == False i valori calcolati sono tali da non alterare nulla (la stabilizzazione non avviene)
@@ -73,19 +83,19 @@ class RobotController:
             # wrot = 0 in quanto il cammino non considera la rotazione
             self.bodytoFeet1 = self.planner.loop(self.V, self.angle, 0, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
             self.Aggiorna()
-            self.accXY = self.wifi.Comunica(self.angles, self.record, False)
+            self.accXY = self.wifi.Comunica(self.angles, self.record, False, sendImage)
             update_func()
 
 
     # fa girare il robot
-    def Gira(self, update_func):
+    def Gira(self, update_func, sendImage):
         if self.InMovimento(): return
         if self.Wrot <= 0.35: return
         self.girando = True
-        while self.girando or (self.planner.phi < 0.98 and not (self.planner.phi > 0.49 and self.planner.phi < 0.51)):
+        while self.girando or not self.CanStop():
             self.bodytoFeet1 = self.planner.loop(0, self.angle, self.Wrot, self.tPlanner, self.offsetPlanner, self.bodytoFeet0)
             self.Aggiorna()
-            self.accXY = self.wifi.Comunica(self.angles, self.record, False)
+            self.accXY = self.wifi.Comunica(self.angles, self.record, False, sendImage)
             update_func()
 
     # Imposta nuove coordinare (utilizzato da vista Lato)
